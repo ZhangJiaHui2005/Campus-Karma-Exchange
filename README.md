@@ -66,8 +66,8 @@ Nếu màn hình hiển thị `Server đang chạy tại http://localhost:5000` 
 ### 🔴 Hằng ngày trước khi bắt đầu làm tính năng mới:
 ```bash
 # 1. Chuyển về nhánh main/dev và kéo code mới nhất về
-git checkout dev
-git pull origin dev
+git checkout main
+git pull origin main
 
 # 2. Cập nhật Prisma Client (phòng trường hợp bạn khác có sửa DB)
 npx prisma generate
