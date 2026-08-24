@@ -17,11 +17,9 @@ export default function LoginPage() {
     setErrorMessage('');
 
     try {
-      // Backend xác thực Google, set HttpOnly Cookie và trả về user
       const data = await googleLogin(credentialResponse.credential);
       setUser(data.user);
 
-      // Chuyển hướng tới trang chủ (được bảo vệ bởi PrivateRoute)
       navigate('/');
     } catch (err) {
       setErrorMessage(err.message);
@@ -55,14 +53,12 @@ export default function LoginPage() {
           </span>
         </div>
 
-        {/* Hiển thị lỗi nếu không đúng mail @student.edu.vn */}
         {errorMessage && (
           <Alert color="failure" icon={ShieldAlert} className="text-xs">
             <span>{errorMessage}</span>
           </Alert>
         )}
 
-        {/* Khối xử lý Đăng nhập */}
         <div className="flex flex-col items-center justify-center pt-2 pb-1 space-y-4">
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 py-3">
