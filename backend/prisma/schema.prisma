@@ -12,12 +12,29 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  fullName     String   @map("full_name")
-  karmaBalance Int      @default(100) @map("karma_balance")
-  createdAt    DateTime @default(now()) @map("created_at")
+model Level {
+  level_id             Int      @id @default(autoincrement())
+  level_name           String
+  min_karma            Int
+  max_karma            Int
+  borrow_limit         Int
+  deposit_discount_pct Float
+  created_at           DateTime @default(now())
+  users                User[]
+}
 
-  @@map("users")
+model User {
+  user_id        Int      @id @default(autoincrement())
+  email          String   @unique
+  password_hash  String?  // Nullable cho Google OAuth
+  google_id      String?  @unique
+  full_name      String
+  avatar         String?
+  karma_balance  Int      @default(100) // Welcome bonus 100 Karma
+  level_id       Int      @default(1)
+  level          Level    @relation(fields: [level_id], references: [level_id])
+  is_verified    Boolean  @default(true)
+  status         String   @default("ACTIVE")
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
 }
