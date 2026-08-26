@@ -7,6 +7,7 @@ import Login from "./pages/auth/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Profile from "./pages/users/Profile";
+import BrowseItems from "./pages/items/BrowseItems";
 import PrivateRoute from "./routes/PrivateRoute";
 import AdminRoute from "./routes/AdminRoute";
 import "./App.css";
@@ -28,6 +29,14 @@ function App() {
               }
             />
             <Route path="/about" element={<About />} />
+            <Route
+              path="/browse"
+              element={
+                <PrivateRoute>
+                  <BrowseItems />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/admin"
               element={

@@ -8,6 +8,8 @@ import cookieParser from 'cookie-parser';
 import routes from './routes/index.js';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import itemRoutes from './routes/itemRoutes.js';
 
 const app = express();
 
@@ -28,5 +30,7 @@ app.get('/health', (req, res) => {
 app.use('/api', routes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin/auth', adminRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/items', itemRoutes);
 
 export default app;
