@@ -4,7 +4,7 @@ import { AdminProvider } from "./context/AdminContext";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Login from "./pages/auth/Login";
-import AdminDashboard from "./pages/admin/Admindashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Profile from "./pages/users/Profile";
 import PrivateRoute from "./routes/PrivateRoute";
