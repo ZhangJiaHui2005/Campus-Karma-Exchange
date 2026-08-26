@@ -8,6 +8,7 @@ import {
   CircleDollarSign,
   Clock3,
   LayoutDashboard,
+  LogOut,
   Menu,
   PackageCheck,
   Search,
@@ -17,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAdmin } from '../../context/AdminContext';
 import AdminUsers from './AdminUsers';
 import AdminPosts from './AdminPosts';
 import AdminActivity from './AdminActivity';
@@ -44,9 +45,9 @@ const statusStyles = {
 
 export default function Admin() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user } = useAuth();
+  const { admin, logout } = useAdmin();
   const adminPath = useLocation().pathname;
-  const isUsersPage = adminPath === '/admin/users';
+  const isUsersPage = adminPath === '/admin/admins';
   const isPostsPage = adminPath === '/admin/items' || adminPath === '/admin/borrow-requests';
   const isActivityPage = adminPath === '/admin/activity';
 
@@ -71,7 +72,7 @@ export default function Admin() {
 
         <nav className="mt-10 space-y-1 text-sm font-medium">
           <a href="/admin" className="flex items-center gap-3 rounded-xl bg-emerald-50 px-4 py-3 text-emerald-700"><LayoutDashboard size={19} />Tổng quan</a>
-          <a href="/admin/users" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${isUsersPage ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><Users size={19} />Người dùng</a>
+          <a href="/admin/admins" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${isUsersPage ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><Users size={19} />Người dùng</a>
           <a href="/admin/items" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${adminPath === '/admin/items' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><Box size={19} />Đồ dùng</a>
           <a href="/admin/borrow-requests" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${adminPath === '/admin/borrow-requests' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><PackageCheck size={19} />Yêu cầu mượn</a>
           <a href="/admin/activity" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${isActivityPage ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><Activity size={19} />Hoạt động</a>
@@ -79,22 +80,26 @@ export default function Admin() {
 
         <div className="mt-auto rounded-2xl bg-slate-50 p-4">
           <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-full bg-emerald-100 font-semibold text-emerald-700">{user?.full_name?.charAt(0) || 'A'}</div>
-            <div className="min-w-0"><p className="truncate text-sm font-semibold">{user?.full_name || 'Quản trị viên'}</p><p className="text-xs text-slate-500">Quản trị viên</p></div>
+            <div className="grid h-10 w-10 place-items-center rounded-full bg-emerald-100 font-semibold text-emerald-700">{admin?.full_name?.charAt(0) || 'A'}</div>
+            <div className="min-w-0"><p className="truncate text-sm font-semibold">{admin?.full_name || 'Quản trị viên'}</p><p className="text-xs text-slate-500">Quản trị viên</p></div>
           </div>
+          <button onClick={logout} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <LogOut size={16} />
+            Đăng xuất
+          </button>
         </div>
       </aside>
 
       <main className="min-h-screen lg:pl-72">
         <header className="flex h-20 items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-8">
           <div className="flex items-center gap-3"><button className="rounded-lg p-2 text-slate-600 lg:hidden" onClick={() => setMenuOpen(true)} aria-label="Mở menu"><Menu size={22} /></button><div><p className="text-xs font-medium uppercase tracking-wider text-emerald-600">Quản trị hệ thống</p><h1 className="text-lg font-bold">Bảng điều khiển</h1></div></div>
-          <div className="flex items-center gap-3"><button className="relative rounded-xl p-2.5 text-slate-500 hover:bg-slate-100" aria-label="Thông báo"><Bell size={20} /><span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" /></button><div className="hidden h-9 w-9 place-items-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700 sm:grid">{user?.full_name?.charAt(0) || 'A'}</div></div>
+          <div className="flex items-center gap-3"><button className="relative rounded-xl p-2.5 text-slate-500 hover:bg-slate-100" aria-label="Thông báo"><Bell size={20} /><span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" /></button><div className="hidden h-9 w-9 place-items-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700 sm:grid">{admin?.full_name?.charAt(0) || 'A'}</div></div>
         </header>
 
         <div className="mx-auto max-w-7xl p-5 sm:p-8">
           {isUsersPage ? <AdminUsers /> : isPostsPage ? <AdminPosts pageTitle={adminPath === '/admin/items' ? 'Đồ dùng' : 'Yêu cầu mượn'} /> : isActivityPage ? <AdminActivity /> : <>
           <section className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <div><h2 className="text-2xl font-bold tracking-tight">Chào buổi sáng, {user?.full_name?.split(' ').at(-1) || 'Admin'}!</h2><p className="mt-1 text-sm text-slate-500">Đây là tình hình hoạt động của Campus Karma hôm nay.</p></div>
+            <div><h2 className="text-2xl font-bold tracking-tight">Chào buổi sáng, {admin?.full_name?.split(' ').at(-1) || 'Admin'}!</h2><p className="mt-1 text-sm text-slate-500">Đây là tình hình hoạt động của Campus Karma hôm nay.</p></div>
             <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><ShieldCheck size={18} />Xem báo cáo hệ thống</button>
           </section>
 

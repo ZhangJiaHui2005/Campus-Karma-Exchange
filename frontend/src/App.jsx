@@ -5,7 +5,6 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Login from "./pages/auth/Login";
 import Admin from "./pages/admin/Admin";
-import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Profile from "./pages/users/Profile";
 import PrivateRoute from "./routes/PrivateRoute";
@@ -32,41 +31,41 @@ function App() {
             <Route
               path="/admin"
               element={
-                <PrivateRoute>
+                <AdminRoute>
                   <Admin />
-                </PrivateRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/users"
               element={
-                <PrivateRoute>
+                <AdminRoute>
                   <Admin />
-                </PrivateRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/items"
               element={
-                <PrivateRoute>
+                <AdminRoute>
                   <Admin />
-                </PrivateRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/borrow-requests"
               element={
-                <PrivateRoute>
+                <AdminRoute>
                   <Admin />
-                </PrivateRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/activity"
               element={
-                <PrivateRoute>
+                <AdminRoute>
                   <Admin />
-                </PrivateRoute>
+                </AdminRoute>
               }
             />
             <Route
@@ -75,14 +74,6 @@ function App() {
                 <PrivateRoute>
                   <Profile />
                 </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin/dashboard"
-              element={
-                <AdminRoute>
-                  <AdminDashboard />
-                </AdminRoute>
               }
             />
           </Routes>
