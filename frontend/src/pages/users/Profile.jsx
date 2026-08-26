@@ -1,15 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Card, Badge, Button, Spinner, Alert } from 'flowbite-react';
-import { 
-  Award, 
-  Zap, 
-  ShieldCheck, 
-  LogOut, 
-  BookOpen, 
-  Percent, 
+import {
+  Card,
+  Badge,
+  Button,
+  Spinner,
+  Alert,
+  Avatar,
+  Tooltip,
+} from 'flowbite-react';
+import {
+  Award,
+  Zap,
+  ShieldCheck,
+  LogOut,
+  BookOpen,
+  Percent,
   MessageSquare,
   RefreshCw,
-  Star
+  Star,
 } from 'lucide-react';
 
 export default function Profile() {
@@ -32,7 +40,7 @@ export default function Profile() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Không thể tải thông tin profile');
-      
+
       setUser(data.user || data.data);
     } catch (err) {
       setError(err.message);
@@ -76,10 +84,10 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
-        
+
         {/* --- HEADER PROFILE & AVATAR --- */}
-        <Card className="shadow-sm border-gray-200 dark:border-gray-800 overflow-hidden">
-          <div className="relative h-24 bg-linear-to-r from-emerald-500 to-teal-600 -m-6 mb-0 p-6 flex justify-end">
+        <Card className="overflow-hidden">
+          <div className="relative h-24 bg-linear-to-r from-emerald-500 to-teal-600 -m-6 mb-0 p-6 flex justify-end items-start gap-2">
             <Button size="xs" color="light" onClick={fetchProfile} className="h-8">
               <RefreshCw className="w-3.5 h-3.5 mr-1" /> Làm mới
             </Button>
@@ -87,21 +95,13 @@ export default function Profile() {
 
           <div className="flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4 pt-2">
             <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
-              {/* Avatar Fix Chặn Ảnh Google */}
-              <div className="-mt-12 relative w-24 h-24 rounded-full overflow-hidden flex items-center justify-center bg-gray-100 dark:bg-gray-800 ring-4 ring-white dark:ring-gray-900 shadow-md shrink-0">
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.full_name || "Avatar"}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-2xl font-bold text-gray-500 dark:text-gray-400">
-                    {user.full_name?.charAt(0) || "U"}
-                  </span>
-                )}
-              </div>
+              <Avatar
+                img={user.avatar || undefined}
+                placeholderInitials={(user.full_name?.charAt(0) || 'U').toUpperCase()}
+                rounded
+                size="lg"
+                className="-mt-12 shrink-0 [&_img]:ring-4 [&_img]:ring-white dark:[&_img]:ring-gray-900 [&_img]:shadow-md"
+              />
 
               <div className="space-y-1">
                 <div className="flex items-center justify-center sm:justify-start gap-2">
@@ -109,7 +109,9 @@ export default function Profile() {
                     {user.full_name}
                   </h1>
                   {user.is_verified && (
-                    <ShieldCheck className="w-5 h-5 text-emerald-500" title="Đã xác thực Sinh viên" />
+                    <Tooltip content="Đã xác thực Sinh viên">
+                      <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                    </Tooltip>
                   )}
                 </div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
@@ -133,37 +135,35 @@ export default function Profile() {
 
         {/* --- KHU VỰC THÔNG TIN CHÍNH --- */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
+
           {/* CỘT 1: VÍ KARMA */}
-          <Card className="bg-linear-to-br from-emerald-600 to-teal-700 text-white border-none shadow-lg md:col-span-1">
-            <div className="flex flex-col justify-between h-full space-y-4">
-              <div className="flex items-center justify-between">
-                <p className="text-emerald-100 text-xs font-semibold uppercase tracking-wider">
-                  Số dư Ví Karma
-                </p>
-                <div className="p-2.5 bg-white/10 backdrop-blur-md rounded-xl">
-                  <Zap className="w-6 h-6 text-yellow-300 fill-yellow-300" />
-                </div>
+          <Card className="bg-linear-to-br from-emerald-600 to-teal-700 text-white border-none shadow-lg md:col-span-1 [&>div]:gap-4">
+            <div className="flex items-center justify-between">
+              <p className="text-emerald-100 text-xs font-semibold uppercase tracking-wider">
+                Số dư Ví Karma
+              </p>
+              <div className="p-2.5 bg-white/10 backdrop-blur-md rounded-xl">
+                <Zap className="w-6 h-6 text-yellow-300 fill-yellow-300" />
               </div>
-              <div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-black tracking-tight">{karma_balance ?? 0}</span>
-                  <span className="text-emerald-200 font-bold text-lg">Karma</span>
-                </div>
-                <p className="text-xs text-emerald-100/80 mt-1">Dùng để đặt cọc & mượn đồ</p>
+            </div>
+            <div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-black tracking-tight">{karma_balance ?? 0}</span>
+                <span className="text-emerald-200 font-bold text-lg">Karma</span>
               </div>
+              <p className="text-xs text-emerald-100/80 mt-1">Dùng để đặt cọc & mượn đồ</p>
             </div>
           </Card>
 
           {/* CỘT 2 & 3: ĐẶC QUYỀN CẤP ĐỘ HIỆN TẠI */}
-          <Card className="shadow-sm border-gray-200 dark:border-gray-800 md:col-span-2">
-            <h3 className="font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-800 pb-3 flex items-center gap-2">
+          <Card className="md:col-span-2">
+            <h3 className="font-bold text-gray-900 dark:text-white border-b border-gray-100 dark:border-gray-700 pb-3 flex items-center gap-2">
               <Award className="w-5 h-5 text-amber-500" />
               Đặc quyền cấp độ ({level?.level_name || 'Tân thủ'})
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-              <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-800 flex items-start gap-3">
+              <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-700 flex items-start gap-3">
                 <BookOpen className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Giới hạn mượn</p>
@@ -173,7 +173,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-800 flex items-start gap-3">
+              <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-700 flex items-start gap-3">
                 <Percent className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Ưu đãi cọc</p>
@@ -183,7 +183,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-100 dark:border-gray-800 flex items-start gap-3 sm:col-span-2">
+              <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-100 dark:border-gray-700 flex items-start gap-3 sm:col-span-2">
                 <MessageSquare className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Quyền Nhắn tin (Chat)</p>
@@ -202,13 +202,13 @@ export default function Profile() {
         </div>
 
         {/* --- CHỈ SỐ BẢO MẬT & XÁC THỰC --- */}
-        <Card className="shadow-sm border-gray-200 dark:border-gray-800">
-          <h3 className="font-bold text-gray-900 dark:text-white pb-2 border-b border-gray-100 dark:border-gray-800">
+        <Card>
+          <h3 className="font-bold text-gray-900 dark:text-white pb-2 border-b border-gray-100 dark:border-gray-700">
             Thông tin tài khoản
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            <div className="flex items-center justify-between sm:justify-start sm:gap-3 p-2.5 bg-gray-50 dark:bg-gray-800/40 rounded-lg">
+            <div className="flex items-center justify-between sm:justify-start sm:gap-3 p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-lg">
               <span className="text-xs text-gray-500 dark:text-gray-400">Đánh giá:</span>
               <div className="flex items-center gap-1 font-bold text-amber-500 text-sm">
                 <Star className="w-4 h-4 fill-amber-400" />
@@ -216,12 +216,12 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between sm:justify-start sm:gap-3 p-2.5 bg-gray-50 dark:bg-gray-800/40 rounded-lg">
+            <div className="flex items-center justify-between sm:justify-start sm:gap-3 p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-lg">
               <span className="text-xs text-gray-500 dark:text-gray-400">Trạng thái:</span>
               <Badge color="success">Đang hoạt động</Badge>
             </div>
 
-            <div className="flex items-center justify-between sm:justify-start sm:gap-3 p-2.5 bg-gray-50 dark:bg-gray-800/40 rounded-lg">
+            <div className="flex items-center justify-between sm:justify-start sm:gap-3 p-2.5 bg-gray-50 dark:bg-gray-700/40 rounded-lg">
               <span className="text-xs text-gray-500 dark:text-gray-400">Email SV:</span>
               <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                 {user.is_verified ? 'Đã xác thực' : 'Chưa xác thực'}
