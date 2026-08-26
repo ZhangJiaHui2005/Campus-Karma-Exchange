@@ -6,6 +6,7 @@ import About from './pages/About'
 import Login from './pages/auth/Login'
 import PrivateRoute from './routes/PrivateRoute'
 import './App.css'
+import Profile from './pages/users/Profile'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
           <Route path="/about" element={<About />} />
+          <Route path='/profile' element={<PrivateRoute><Profile /></PrivateRoute>} />
         </Routes>
       </div>
     </AuthProvider>

@@ -27,6 +27,7 @@ function Home() {
         <div className="user-info">
           <p><strong>{user.full_name}</strong> ({user.email})</p>
           <p>Karma: {user.karma_balance}</p>
+          <img src={user.avatar} alt="Avatar" />
         </div>
       )}
 
