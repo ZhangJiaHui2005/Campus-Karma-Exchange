@@ -3,7 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Login from "./pages/auth/Login";
-import Admin from "./pages/Admin";
+import Admin from "./pages/admin/Admin";
 import PrivateRoute from "./routes/PrivateRoute";
 import "./App.css";
 
@@ -30,6 +30,17 @@ function App() {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/admin/users"
+            element={
+              <PrivateRoute>
+                <Admin />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/admin/items" element={<PrivateRoute><Admin /></PrivateRoute>} />
+          <Route path="/admin/borrow-requests" element={<PrivateRoute><Admin /></PrivateRoute>} />
+          <Route path="/admin/activity" element={<PrivateRoute><Admin /></PrivateRoute>} />
         </Routes>
       </div>
     </AuthProvider>

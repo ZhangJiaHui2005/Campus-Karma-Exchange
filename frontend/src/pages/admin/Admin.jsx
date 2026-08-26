@@ -16,7 +16,11 @@ import {
   X,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import AdminUsers from './AdminUsers';
+import AdminPosts from './AdminPosts';
+import AdminActivity from './AdminActivity';
 
 const summaryCards = [
   { label: 'Người dùng', value: '1,284', change: '+12.5%', icon: Users, tone: 'bg-blue-50 text-blue-600' },
@@ -41,6 +45,10 @@ const statusStyles = {
 export default function Admin() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useAuth();
+  const adminPath = useLocation().pathname;
+  const isUsersPage = adminPath === '/admin/users';
+  const isPostsPage = adminPath === '/admin/items' || adminPath === '/admin/borrow-requests';
+  const isActivityPage = adminPath === '/admin/activity';
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -63,10 +71,10 @@ export default function Admin() {
 
         <nav className="mt-10 space-y-1 text-sm font-medium">
           <a href="/admin" className="flex items-center gap-3 rounded-xl bg-emerald-50 px-4 py-3 text-emerald-700"><LayoutDashboard size={19} />Tổng quan</a>
-          <a href="/admin" className="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-600 hover:bg-slate-50"><Users size={19} />Người dùng</a>
-          <a href="/admin" className="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-600 hover:bg-slate-50"><Box size={19} />Đồ dùng</a>
-          <a href="/admin" className="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-600 hover:bg-slate-50"><PackageCheck size={19} />Yêu cầu mượn</a>
-          <a href="/admin" className="flex items-center gap-3 rounded-xl px-4 py-3 text-slate-600 hover:bg-slate-50"><Activity size={19} />Hoạt động</a>
+          <a href="/admin/users" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${isUsersPage ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><Users size={19} />Người dùng</a>
+          <a href="/admin/items" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${adminPath === '/admin/items' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><Box size={19} />Đồ dùng</a>
+          <a href="/admin/borrow-requests" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${adminPath === '/admin/borrow-requests' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><PackageCheck size={19} />Yêu cầu mượn</a>
+          <a href="/admin/activity" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${isActivityPage ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><Activity size={19} />Hoạt động</a>
         </nav>
 
         <div className="mt-auto rounded-2xl bg-slate-50 p-4">
@@ -84,6 +92,7 @@ export default function Admin() {
         </header>
 
         <div className="mx-auto max-w-7xl p-5 sm:p-8">
+          {isUsersPage ? <AdminUsers /> : isPostsPage ? <AdminPosts pageTitle={adminPath === '/admin/items' ? 'Đồ dùng' : 'Yêu cầu mượn'} /> : isActivityPage ? <AdminActivity /> : <>
           <section className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div><h2 className="text-2xl font-bold tracking-tight">Chào buổi sáng, {user?.full_name?.split(' ').at(-1) || 'Admin'}!</h2><p className="mt-1 text-sm text-slate-500">Đây là tình hình hoạt động của Campus Karma hôm nay.</p></div>
             <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"><ShieldCheck size={18} />Xem báo cáo hệ thống</button>
@@ -101,6 +110,7 @@ export default function Admin() {
 
             <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2"><div className="flex items-center justify-between"><div><h3 className="font-bold">Hoạt động Karma</h3><p className="mt-0.5 text-xs text-slate-500">7 ngày gần nhất</p></div><button className="rounded-lg border border-slate-200 p-2 text-slate-500" aria-label="Tìm kiếm hoạt động"><Search size={17} /></button></div><div className="mt-8 flex h-36 items-end justify-between gap-2">{[38, 55, 43, 76, 62, 88, 71].map((height, index) => <div key={index} className="flex flex-1 flex-col items-center gap-2"><div className="w-full rounded-t-md bg-emerald-500/90" style={{ height: `${height}%` }} /><span className="text-[10px] text-slate-400">T{index + 2}</span></div>)}</div><div className="mt-6 rounded-xl bg-emerald-50 p-4"><div className="flex gap-3"><CheckCircle2 className="mt-0.5 shrink-0 text-emerald-600" size={18} /><div><p className="text-sm font-semibold text-emerald-900">Hệ thống hoạt động ổn định</p><p className="mt-1 text-xs leading-5 text-emerald-700">Không có báo cáo vi phạm cần ưu tiên xử lý.</p></div><ChevronRight className="ml-auto mt-1 text-emerald-600" size={18} /></div></div></article>
           </section>
+          </>}
         </div>
       </main>
     </div>
