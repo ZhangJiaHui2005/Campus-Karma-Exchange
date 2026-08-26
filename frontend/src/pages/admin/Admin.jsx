@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { Sidebar, SidebarItemGroup, SidebarItems } from 'flowbite-react';
 import { useAuth } from '../../context/AuthContext';
 import AdminUsers from './AdminUsers';
 import AdminPosts from './AdminPosts';
@@ -60,7 +61,8 @@ export default function Admin() {
         />
       )}
 
-      <aside className={`fixed inset-y-0 left-0 z-40 flex w-72 flex-col border-r border-slate-200 bg-white px-4 py-5 transition-transform lg:translate-x-0 ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed inset-y-0 left-0 z-40 w-72 border-r border-slate-200 bg-white py-5 transition-transform lg:translate-x-0 ${menuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <Sidebar aria-label="Điều hướng quản trị" className="h-full w-full [&>div]:bg-transparent [&>div]:p-4">
         <div className="flex items-center justify-between px-2">
           <a href="/" className="flex items-center gap-3 font-bold text-slate-900">
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-600 text-lg text-white">K</span>
@@ -69,13 +71,13 @@ export default function Admin() {
           <button className="rounded-lg p-2 text-slate-500 lg:hidden" onClick={() => setMenuOpen(false)} aria-label="Đóng menu"><X size={20} /></button>
         </div>
 
-        <nav className="mt-10 space-y-1 text-sm font-medium">
+        <SidebarItems><SidebarItemGroup className="mt-8 border-0 pt-0">
           <a href="/admin" className="flex items-center gap-3 rounded-xl bg-emerald-50 px-4 py-3 text-emerald-700"><LayoutDashboard size={19} />Tổng quan</a>
           <a href="/admin/users" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${isUsersPage ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><Users size={19} />Người dùng</a>
           <a href="/admin/items" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${adminPath === '/admin/items' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><Box size={19} />Đồ dùng</a>
           <a href="/admin/borrow-requests" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${adminPath === '/admin/borrow-requests' ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><PackageCheck size={19} />Yêu cầu mượn</a>
           <a href="/admin/activity" className={`flex items-center gap-3 rounded-xl px-4 py-3 ${isActivityPage ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50'}`}><Activity size={19} />Hoạt động</a>
-        </nav>
+        </SidebarItemGroup></SidebarItems>
 
         <div className="mt-auto rounded-2xl bg-slate-50 p-4">
           <div className="flex items-center gap-3">
@@ -83,6 +85,7 @@ export default function Admin() {
             <div className="min-w-0"><p className="truncate text-sm font-semibold">{user?.full_name || 'Quản trị viên'}</p><p className="text-xs text-slate-500">Quản trị viên</p></div>
           </div>
         </div>
+        </Sidebar>
       </aside>
 
       <main className="min-h-screen lg:pl-72">
