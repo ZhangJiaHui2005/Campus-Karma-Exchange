@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Home from "./pages/Home";
-import About from "./pages/About";
 import Login from "./pages/auth/Login";
 import PrivateRoute from "./routes/PrivateRoute";
 import "./App.css";
@@ -21,7 +20,6 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="/about" element={<About />} />
           <Route
             path="/profile"
             element={

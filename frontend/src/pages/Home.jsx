@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "flowbite-react";
 import { useAuth } from "../context/AuthContext";
+import { NavigationBar } from "../components/Navbar";
+import UserLayout from "../layouts/UserLayout";
 
 function Home() {
   const { user, logout } = useAuth();
@@ -19,13 +21,15 @@ function Home() {
   };
 
   return (
-    <div className="page">
+    <UserLayout>
       <h1>Home Page</h1>
       <p>Welcome to Campus Karma Exchange</p>
 
       {user && (
         <div className="user-info">
-          <p><strong>{user.full_name}</strong> ({user.email})</p>
+          <p>
+            <strong>{user.full_name}</strong> ({user.email})
+          </p>
           <p>Karma: {user.karma_balance}</p>
           <img src={user.avatar} alt="Avatar" />
         </div>
@@ -34,7 +38,7 @@ function Home() {
       <Button onClick={handleLogout} disabled={loading} color="failure">
         {loading ? "Đang đăng xuất..." : "Đăng xuất"}
       </Button>
-    </div>
+    </UserLayout>
   );
 }
 
