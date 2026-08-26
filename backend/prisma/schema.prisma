@@ -38,3 +38,13 @@ model User {
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 }
+
+model Admin {
+  admin_id      Int       @id @default(autoincrement())
+  email         String    @unique
+  password_hash String
+  full_name     String
+  last_login_at DateTime?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+}
