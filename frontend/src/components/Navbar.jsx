@@ -102,7 +102,7 @@ export function NavigationBar() {
                 <DropdownItem as={Link} to="/profile">
                   Profile
                 </DropdownItem>
-                <DropdownItem>My Items</DropdownItem>
+                <DropdownItem as={Link} to="/browse">Browse Items</DropdownItem>
                 <DropdownItem>Transactions</DropdownItem>
                 <DropdownDivider />
                 <DropdownItem onClick={handleLogout}>Sign out</DropdownItem>
