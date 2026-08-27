@@ -60,6 +60,14 @@ export default function BrowseItems() {
     setAppliedFilters({ ...filters, page: 1 });
   };
 
+  const handleCategoryClick = (category_id) => {
+    setLoading(true);
+    setError("");
+    const newFilters = { ...filters, category_id: String(category_id || ""), page: 1 };
+    setFilters(newFilters);
+    setAppliedFilters(newFilters);
+  };
+
   const clearFilters = () => {
     const cleared = { q: "", category_id: "", type: "", sort: "newest" };
     setFilters(cleared);
@@ -202,6 +210,36 @@ export default function BrowseItems() {
             </div>
           </form>
         </Card>
+
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => handleCategoryClick("")}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+                !appliedFilters.category_id
+                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900"
+                  : "bg-gray-100 text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              }`}
+            >
+              Tất cả
+            </button>
+            {categories.map((category) => (
+              <button
+                key={category.category_id}
+                type="button"
+                onClick={() => handleCategoryClick(category.category_id)}
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+                  appliedFilters.category_id === String(category.category_id)
+                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900"
+                    : "bg-gray-100 text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                }`}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="mb-4 flex items-center justify-between">
           <p className="text-sm text-gray-600 dark:text-gray-400">Tìm thấy {pagination.total} vật phẩm</p>

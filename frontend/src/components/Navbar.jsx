@@ -70,9 +70,6 @@ export function NavigationBar() {
           <div className="inline-flex items-center justify-center w-10 h-10 mr-2 rounded-full overflow-hidden ">
               <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
           </div>
-            <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-              GreenShare
-            </span>
           </NavbarBrand>
 
           <div className="flex md:order-2">
@@ -130,29 +127,14 @@ export function NavigationBar() {
           </div>
 
           <NavbarCollapse>
-            <NavbarLink as={Link} to="/">
-              Home
-            </NavbarLink>
             <NavbarLink as={Link} to="/browse">
               Browse Items
             </NavbarLink>
-            <NavbarLink as={Link} to="/how-it-works">
-              How It Works
-            </NavbarLink>
-
             <NavbarLink as={Link} to="/wallet">
               Wallet
             </NavbarLink>
-
             <NavbarLink as={Link} to="/membership">
               Membership
-            </NavbarLink>
-
-            <NavbarLink as={Link} to="/about">
-              About
-            </NavbarLink>
-            <NavbarLink as={Link} to="/admin">
-              Admin
             </NavbarLink>
           </NavbarCollapse>
         </Navbar>
