@@ -15,13 +15,15 @@ import { Link } from "react-router-dom";
 import { Recycle } from "lucide-react";
 import { useEffect, useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 export function NavigationBar() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   async function fetchProfile() {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+      const res = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
       });
@@ -42,7 +44,7 @@ export function NavigationBar() {
 
   const handleLogout = async () => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+      await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -58,7 +60,11 @@ export function NavigationBar() {
     <header className="w-full bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
       {/* Container chuẩn Tailwind (tương đương .container của Bootstrap) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Navbar fluid rounded className="bg-transparent dark:bg-transparent px-0 py-3">
+        <Navbar
+          fluid
+          rounded
+          className="bg-transparent dark:bg-transparent px-0 py-3"
+        >
           <NavbarBrand as={Link} to="/">
             <div className="inline-flex items-center justify-center w-10 h-10 mr-2 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
               <Recycle className="w-5 h-5" />
@@ -102,7 +108,7 @@ export function NavigationBar() {
                 <DropdownItem as={Link} to="/profile">
                   Profile
                 </DropdownItem>
-                <DropdownItem as={Link} to="/browse" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400">
+                <DropdownItem as={Link} to="/browse">
                   Browse Items
                 </DropdownItem>
                 <DropdownItem>Transactions</DropdownItem>

@@ -35,9 +35,11 @@ model User {
   level          Level    @relation(fields: [level_id], references: [level_id])
   is_verified    Boolean  @default(true)
   status         String   @default("ACTIVE")
+  last_active_at DateTime?
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
   items          Item[]
+  borrow_requests BorrowRequest[] @relation("BorrowerRequests")
 }
 
 model Category {
@@ -65,6 +67,7 @@ model Item {
   updated_at  DateTime @updatedAt
   owner       User     @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
   category    Category @relation(fields: [category_id], references: [category_id], onDelete: Restrict)
+  borrow_requests BorrowRequest[] @relation("ItemBorrowRequests")
 
   @@index([owner_id])
   @@index([category_id])
@@ -81,4 +84,28 @@ model Admin {
   last_login_at DateTime?
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
+}
+
+model AdminNotification {
+  notification_id Int      @id @default(autoincrement())
+  type            String
+  title           String
+  message         String
+  user_id         Int?
+  created_at      DateTime @default(now())
+  read_at         DateTime?
+}
+
+model BorrowRequest {
+  request_id  Int      @id @default(autoincrement())
+  borrower_id Int
+  item_id     Int
+  status      String   @default("PENDING")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  borrower    User     @relation("BorrowerRequests", fields: [borrower_id], references: [user_id], onDelete: Cascade)
+  item        Item     @relation("ItemBorrowRequests", fields: [item_id], references: [item_id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([created_at])
 }

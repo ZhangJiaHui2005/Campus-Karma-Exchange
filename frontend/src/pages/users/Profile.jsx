@@ -21,20 +21,18 @@ import {
 } from "lucide-react";
 import UserLayout from "../../layouts/UserLayout";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   const fetchProfile = async () => {
     try {
       setLoading(true);
       setError("");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+      const res = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -51,9 +49,13 @@ export default function Profile() {
     }
   };
 
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
   const handleLogout = async () => {
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+      await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });

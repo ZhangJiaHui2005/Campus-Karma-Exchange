@@ -1,6 +1,5 @@
 import {
   Activity,
-  ArrowUpRight,
   Bell,
   Box,
   CheckCircle2,
@@ -18,88 +17,94 @@ import {
 } from "lucide-react";
 import { Sidebar, SidebarItemGroup, SidebarItems } from "flowbite-react";
 import { useState } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useAdmin } from "../../context/AdminContext";
 import AdminUsers from "./AdminUsers";
 import AdminPosts from "./AdminPosts";
 import AdminActivity from "./AdminActivity";
+import {
+  fetchAdminDashboard,
+  fetchAdminPendingApprovals,
+  fetchAdminNotifications,
+  fetchAdminSystemReport,
+} from "../../services/adminAuthService";
 
 const summaryCards = [
   {
     label: "Người dùng",
-    value: "1,284",
-    change: "+12.5%",
+    key: "total_users",
     icon: Users,
     tone: "bg-blue-50 text-blue-600",
   },
   {
     label: "Đồ dùng đang cho mượn",
-    value: "86",
-    change: "+8.2%",
+    key: "available_items",
     icon: Box,
     tone: "bg-emerald-50 text-emerald-600",
   },
   {
     label: "Yêu cầu chờ duyệt",
-    value: "14",
-    change: "Cần xử lý",
+    key: "pending_approvals",
     icon: Clock3,
     tone: "bg-amber-50 text-amber-600",
+    link: "/admin/borrow-requests",
   },
   {
     label: "Karma đã luân chuyển",
-    value: "24,680",
-    change: "+18.4%",
+    key: "karma_in_circulation",
     icon: CircleDollarSign,
     tone: "bg-violet-50 text-violet-600",
   },
 ];
 
-const requests = [
-  {
-    borrower: "Nguyễn Minh Anh",
-    item: "Máy tính Casio FX-580VN X",
-    owner: "Trần Quốc Bảo",
-    date: "Hôm nay, 09:40",
-    status: "Chờ duyệt",
-  },
-  {
-    borrower: "Lê Hoàng Nam",
-    item: "Bộ dụng cụ sửa xe đạp",
-    owner: "Phạm Gia Hân",
-    date: "Hôm nay, 08:15",
-    status: "Đã xác nhận",
-  },
-  {
-    borrower: "Vũ Khánh Linh",
-    item: "Sách Giáo trình Marketing",
-    owner: "Đỗ Anh Tuấn",
-    date: "Hôm qua, 17:20",
-    status: "Đã xác nhận",
-  },
-  {
-    borrower: "Ngô Đức Thành",
-    item: "Tripod điện thoại",
-    owner: "Mai Thanh Thảo",
-    date: "Hôm qua, 14:05",
-    status: "Đã hủy",
-  },
-];
-
-const statusStyles = {
-  "Chờ duyệt": "bg-amber-50 text-amber-700 ring-amber-600/20",
-  "Đã xác nhận": "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
-  "Đã hủy": "bg-rose-50 text-rose-700 ring-rose-600/20",
-};
-
 export default function AdminDashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dashboard, setDashboard] = useState({ stats: {}, recent_items: [] });
+  const [notifications, setNotifications] = useState([]);
+  const [systemReport, setSystemReport] = useState(null);
+  const [pendingApprovals, setPendingApprovals] = useState(null);
+  const [panel, setPanel] = useState(null);
   const { admin, logout } = useAdmin();
   const adminPath = useLocation().pathname;
   const isUsersPage = adminPath === "/admin/users";
   const isPostsPage =
     adminPath === "/admin/items" || adminPath === "/admin/borrow-requests";
   const isActivityPage = adminPath === "/admin/activity";
+
+  useEffect(() => {
+    fetchAdminDashboard()
+      .then(setDashboard)
+      .catch(() => setDashboard({ stats: {}, recent_items: [] }));
+    fetchAdminNotifications()
+      .then((data) => setNotifications(data.notifications || []))
+      .catch(() => setNotifications([]));
+  }, []);
+
+  const openSystemReport = async () => {
+    setPanel("report");
+    try {
+      setSystemReport(await fetchAdminSystemReport());
+    } catch (error) {
+      setSystemReport({
+        status: "ERROR",
+        checks: [
+          { name: "API admin", status: "ERROR", message: error.message },
+        ],
+      });
+    }
+  };
+
+  const openPendingApprovals = async (event) => {
+    event.preventDefault();
+    setPanel("pending");
+    try {
+      const data = await fetchAdminPendingApprovals();
+      setPendingApprovals(data.pending);
+    } catch {
+      setPendingApprovals({ users: [], items: [], borrow_requests: [] });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -201,7 +206,7 @@ export default function AdminDashboard() {
       </aside>
 
       <main className="min-h-screen lg:pl-72">
-        <header className="flex h-20 items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-8">
+        <header className="relative flex h-20 items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-8">
           <div className="flex items-center gap-3">
             <button
               className="rounded-lg p-2 text-slate-600 lg:hidden"
@@ -219,12 +224,45 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <button
+              onClick={() =>
+                setPanel(panel === "notifications" ? null : "notifications")
+              }
               className="relative rounded-xl p-2.5 text-slate-500 hover:bg-slate-100"
               aria-label="Thông báo"
             >
               <Bell size={20} />
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" />
             </button>
+            {panel === "notifications" && (
+              <div className="absolute right-16 top-16 z-20 w-80 rounded-xl border border-slate-200 bg-white p-4 shadow-xl">
+                <h3 className="font-bold">Thông báo</h3>
+                <div className="mt-3 max-h-72 space-y-3 overflow-y-auto">
+                  {notifications.length ? (
+                    notifications.map((notification) => (
+                      <div
+                        key={notification.notification_id}
+                        className="border-b border-slate-100 pb-3 last:border-0"
+                      >
+                        <p className="text-sm font-semibold">
+                          {notification.title}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {notification.message}
+                        </p>
+                        <p className="mt-1 text-[11px] text-slate-400">
+                          {new Intl.DateTimeFormat("vi-VN", {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          }).format(new Date(notification.created_at))}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-slate-500">Chưa có thông báo.</p>
+                  )}
+                </div>
+              </div>
+            )}
             <div className="hidden h-9 w-9 place-items-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700 sm:grid">
               {admin?.full_name?.charAt(0) || "A"}
             </div>
@@ -254,18 +292,161 @@ export default function AdminDashboard() {
                     Đây là tình hình hoạt động của Campus Karma hôm nay.
                   </p>
                 </div>
-                <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700">
+                <button
+                  onClick={openSystemReport}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+                >
                   <ShieldCheck size={18} />
                   Xem báo cáo hệ thống
                 </button>
               </section>
 
+              {panel === "report" && systemReport && (
+                <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-bold">Báo cáo hệ thống</h3>
+                      <p
+                        className={`mt-1 text-sm font-semibold ${systemReport.status === "OK" ? "text-emerald-600" : "text-rose-600"}`}
+                      >
+                        {systemReport.status === "OK"
+                          ? "Hệ thống đang hoạt động ổn định"
+                          : "Hệ thống đang gặp trục trặc"}
+                      </p>
+                    </div>
+                    <span className="text-xs text-slate-500">
+                      {systemReport.response_time_ms} ms
+                    </span>
+                  </div>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    {systemReport.checks.map((check) => (
+                      <div
+                        key={check.name}
+                        className={`rounded-xl border p-3 ${check.status === "OK" ? "border-emerald-200 bg-emerald-50" : "border-rose-200 bg-rose-50"}`}
+                      >
+                        <p className="text-sm font-semibold">
+                          {check.name}:{" "}
+                          {check.status === "OK" ? "Ổn định" : "Lỗi"}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-600">
+                          {check.message}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {panel === "pending" && pendingApprovals && (
+                <section className="mb-6 rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-bold">Danh sách chờ duyệt</h3>
+                      <p className="mt-1 text-sm text-slate-500">
+                        Tất cả yêu cầu cần admin xử lý
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setPanel(null)}
+                      className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
+                      aria-label="Đóng danh sách chờ duyệt"
+                    >
+                      <X size={18} />
+                    </button>
+                  </div>
+                  <div className="mt-4 grid gap-4 lg:grid-cols-3">
+                    <div className="rounded-xl border border-sky-200 bg-sky-50 p-4">
+                      <h4 className="font-semibold text-sky-900">
+                        Người dùng ({pendingApprovals.users.length})
+                      </h4>
+                      <div className="mt-3 space-y-2">
+                        {pendingApprovals.users.length ? (
+                          pendingApprovals.users.map((user) => (
+                            <p
+                              key={user.user_id}
+                              className="text-sm text-slate-700"
+                            >
+                              {user.full_name}
+                              <span className="block text-xs text-slate-500">
+                                {user.email}
+                              </span>
+                            </p>
+                          ))
+                        ) : (
+                          <p className="text-sm text-slate-500">
+                            Không có dữ liệu.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="rounded-xl border border-orange-200 bg-orange-50 p-4">
+                      <h4 className="font-semibold text-orange-900">
+                        Đồ dùng ({pendingApprovals.items.length})
+                      </h4>
+                      <div className="mt-3 space-y-2">
+                        {pendingApprovals.items.length ? (
+                          pendingApprovals.items.map((item) => (
+                            <p
+                              key={item.item_id}
+                              className="text-sm text-slate-700"
+                            >
+                              {item.title}
+                              <span className="block text-xs text-slate-500">
+                                {item.owner?.full_name || "Không rõ"}
+                              </span>
+                            </p>
+                          ))
+                        ) : (
+                          <p className="text-sm text-slate-500">
+                            Không có dữ liệu.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                      <h4 className="font-semibold text-amber-900">
+                        Yêu cầu mượn ({pendingApprovals.borrow_requests.length})
+                      </h4>
+                      <div className="mt-3 space-y-2">
+                        {pendingApprovals.borrow_requests.length ? (
+                          pendingApprovals.borrow_requests.map((request) => (
+                            <p
+                              key={request.request_id}
+                              className="text-sm text-slate-700"
+                            >
+                              {request.item?.title || "Đồ dùng"}
+                              <span className="block text-xs text-slate-500">
+                                Người mượn:{" "}
+                                {request.borrower?.full_name || "Không rõ"}
+                              </span>
+                            </p>
+                          ))
+                        ) : (
+                          <p className="text-sm text-slate-500">
+                            Không có dữ liệu.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              )}
+
               <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                {summaryCards.map(
-                  ({ label, value, change, icon: Icon, tone }) => (
-                    <article
-                      key={label}
-                      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                {summaryCards.map(({ label, key, icon: Icon, tone, link }) => (
+                  <article
+                    key={label}
+                    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                  >
+                    <a
+                      href={link || "#"}
+                      onClick={
+                        key === "pending_approvals"
+                          ? openPendingApprovals
+                          : undefined
+                      }
+                      className={link ? "block" : "pointer-events-none block"}
                     >
                       <div className="flex items-start justify-between">
                         <span
@@ -273,18 +454,21 @@ export default function AdminDashboard() {
                         >
                           <Icon size={21} />
                         </span>
-                        <span className="flex items-center gap-1 text-xs font-semibold text-emerald-600">
-                          <ArrowUpRight size={14} />
-                          {change}
-                        </span>
                       </div>
                       <p className="mt-5 text-2xl font-bold tracking-tight">
-                        {value}
+                        {(dashboard.stats[key] || 0).toLocaleString("vi-VN")}
                       </p>
                       <p className="mt-1 text-sm text-slate-500">{label}</p>
-                    </article>
-                  ),
-                )}
+                      {key === "pending_approvals" && (
+                        <p className="mt-2 text-xs text-slate-400">
+                          User {dashboard.stats.pending_users || 0} · Đồ dùng{" "}
+                          {dashboard.stats.pending_items || 0} · Mượn{" "}
+                          {dashboard.stats.pending_requests || 0}
+                        </p>
+                      )}
+                    </a>
+                  </article>
+                ))}
               </section>
 
               <section className="mt-6 grid gap-6 xl:grid-cols-5">
@@ -315,34 +499,43 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100">
-                        {requests.map((request) => (
-                          <tr
-                            key={`${request.borrower}-${request.item}`}
-                            className="hover:bg-slate-50"
-                          >
+                        {dashboard.recent_items.map((item) => (
+                          <tr key={item.item_id} className="hover:bg-slate-50">
                             <td className="px-5 py-4">
                               <p className="font-semibold">
-                                {request.borrower}
+                                {item.owner?.full_name || "Không rõ"}
                               </p>
                               <p className="text-xs text-slate-500">
-                                Chủ đồ: {request.owner}
+                                Danh mục:{" "}
+                                {item.category?.name || "Chưa phân loại"}
                               </p>
                             </td>
                             <td className="px-5 py-4 text-slate-600">
-                              {request.item}
+                              {item.title}
                             </td>
                             <td className="px-5 py-4 text-slate-500">
-                              {request.date}
+                              {new Intl.DateTimeFormat("vi-VN", {
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                              }).format(new Date(item.created_at))}
                             </td>
                             <td className="px-5 py-4">
-                              <span
-                                className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[request.status]}`}
-                              >
-                                {request.status}
+                              <span className="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                                {item.status}
                               </span>
                             </td>
                           </tr>
                         ))}
+                        {dashboard.recent_items.length === 0 && (
+                          <tr>
+                            <td
+                              colSpan="4"
+                              className="px-5 py-12 text-center text-slate-500"
+                            >
+                              Chưa có dữ liệu item.
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
