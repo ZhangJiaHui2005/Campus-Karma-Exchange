@@ -102,7 +102,9 @@ export function NavigationBar() {
                 <DropdownItem as={Link} to="/profile">
                   Profile
                 </DropdownItem>
-                <DropdownItem as={Link} to="/browse">Browse Items</DropdownItem>
+                <DropdownItem as={Link} to="/browse" className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400">
+                  Browse Items
+                </DropdownItem>
                 <DropdownItem>Transactions</DropdownItem>
                 <DropdownDivider />
                 <DropdownItem onClick={handleLogout}>Sign out</DropdownItem>
@@ -121,7 +123,7 @@ export function NavigationBar() {
           </div>
 
           <NavbarCollapse>
-            <NavbarLink as={Link} to="/" active>
+            <NavbarLink as={Link} to="/">
               Home
             </NavbarLink>
             <NavbarLink as={Link} to="/browse">
@@ -132,9 +134,6 @@ export function NavigationBar() {
             </NavbarLink>
             <NavbarLink as={Link} to="/about">
               About
-            </NavbarLink>
-            <NavbarLink as={Link} to="/admin">
-              Admin
             </NavbarLink>
           </NavbarCollapse>
         </Navbar>

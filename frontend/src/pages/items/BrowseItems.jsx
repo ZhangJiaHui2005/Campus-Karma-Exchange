@@ -100,8 +100,8 @@ export default function BrowseItems() {
             </p>
           </div>
           <Button color="success" onClick={() => setShowCreate((value) => !value)}>
-            {showCreate ? <X className="mr-2 h-5 w-5" /> : <Plus className="mr-2 h-5 w-5" />}
-            {showCreate ? "Đóng" : "Đăng vật phẩm"}
+            {showCreate ? <X className="mr-2 h-5 w-5 dark:text-white" /> : <Plus className="mr-2 h-5 w-5 dark:text-white" />}
+            <span className="dark:text-white">{showCreate ? "Đóng" : "Đăng vật phẩm"}</span>
           </Button>
         </div>
 
@@ -198,7 +198,7 @@ export default function BrowseItems() {
             </div>
             <div className="flex gap-2 lg:col-span-5 lg:justify-end">
               <Button color="light" type="button" onClick={clearFilters}><X className="mr-2 h-4 w-4" />Xóa lọc</Button>
-              <Button color="success" type="submit"><SlidersHorizontal className="mr-2 h-4 w-4" />Áp dụng</Button>
+              <Button color="success" type="submit" className="dark:text-white"><SlidersHorizontal className="mr-2 h-4 w-4" />Áp dụng</Button>
             </div>
           </form>
         </Card>
