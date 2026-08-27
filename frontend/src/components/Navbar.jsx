@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { Recycle } from "lucide-react";
 import { useEffect, useState } from "react";
 
+
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export function NavigationBar() {
@@ -66,9 +67,9 @@ export function NavigationBar() {
           className="bg-transparent dark:bg-transparent px-0 py-3"
         >
           <NavbarBrand as={Link} to="/">
-            <div className="inline-flex items-center justify-center w-10 h-10 mr-2 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
-              <Recycle className="w-5 h-5" />
-            </div>
+          <div className="inline-flex items-center justify-center w-10 h-10 mr-2 rounded-full overflow-hidden ">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+          </div>
             <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
               GreenShare
             </span>
@@ -138,8 +139,20 @@ export function NavigationBar() {
             <NavbarLink as={Link} to="/how-it-works">
               How It Works
             </NavbarLink>
+
+            <NavbarLink as={Link} to="/wallet">
+              Wallet
+            </NavbarLink>
+
+            <NavbarLink as={Link} to="/membership">
+              Membership
+            </NavbarLink>
+
             <NavbarLink as={Link} to="/about">
               About
+            </NavbarLink>
+            <NavbarLink as={Link} to="/admin">
+              Admin
             </NavbarLink>
           </NavbarCollapse>
         </Navbar>

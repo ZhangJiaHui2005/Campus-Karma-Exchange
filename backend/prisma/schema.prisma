@@ -40,6 +40,8 @@ model User {
   updated_at     DateTime @updatedAt
   items          Item[]
   borrow_requests BorrowRequest[] @relation("BorrowerRequests")
+  payments       Payments[]
+  memberships    Memberships[]
 }
 
 model Category {
@@ -108,4 +110,77 @@ model BorrowRequest {
 
   @@index([status])
   @@index([created_at])
+}
+
+model Transaction {
+  trans_id              String                @id @default(uuid()) @db.Uuid
+  insurance_fund_logs   Insurance_Fund_Logs[]
+}
+
+model Payments {
+  payment_id      String         @id @default(uuid()) @db.Uuid
+  user_id         Int
+  amount_vnd      Int
+  karma_received  Int            @default(0)
+  payment_gateway String
+  transaction_ref String         @unique
+  purpose         PaymentPurpose
+  status          PaymentStatus
+  created_at      DateTime       @default(now())
+  paid_at         DateTime?
+  user            User           @relation(fields: [user_id], references: [user_id])
+  membership      Memberships?
+}
+
+model Memberships {
+  membership_id  String                  @id @default(uuid()) @db.Uuid
+  user_id        Int
+  payment_id     String?                 @unique @db.Uuid
+  plan_type      MembershipPlanType
+  payment_method MembershipPaymentMethod
+  karma_cost     Int?
+  price_vnd      Int?
+  start_at       DateTime
+  end_at         DateTime
+  status         MembershipStatus
+  created_at     DateTime                @default(now())
+  user           User                    @relation(fields: [user_id], references: [user_id])
+  payment        Payments?               @relation(fields: [payment_id], references: [payment_id])
+}
+
+model Insurance_Fund_Logs {
+  log_id       String      @id @default(uuid()) @db.Uuid
+  trans_id     String      @db.Uuid
+  amount_karma Int
+  rate_pct     Decimal
+  created_at   DateTime    @default(now())
+  transaction  Transaction @relation(fields: [trans_id], references: [trans_id])
+}
+
+enum PaymentPurpose {
+  KARMA_TOPUP
+  MEMBERSHIP
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+enum MembershipPlanType {
+  KARMA_PASS
+}
+
+enum MembershipPaymentMethod {
+  PAYOS
+  KARMA
+}
+
+enum MembershipStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  CANCELLED
 }

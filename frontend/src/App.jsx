@@ -10,6 +10,10 @@ import Profile from "./pages/users/Profile";
 import BrowseItems from "./pages/items/BrowseItems";
 import PrivateRoute from "./routes/PrivateRoute";
 import AdminRoute from "./routes/AdminRoute";
+import Wallet from "./pages/wallet/Wallet";
+import TopUp from "./pages/wallet/TopUp";
+import TopUpResult from "./pages/wallet/TopUpResult";
+import KarmaPass from "./pages/membership/KarmaPass";
 import "./App.css";
 
 function App() {
@@ -29,6 +33,10 @@ function App() {
               }
             />
             <Route path="/about" element={<About />} />
+            <Route path="/wallet" element={<PrivateRoute><Wallet /></PrivateRoute>} />
+            <Route path="/wallet/topup" element={<PrivateRoute><TopUp /></PrivateRoute>} />
+            <Route path="/wallet/topup/result" element={<PrivateRoute><TopUpResult /></PrivateRoute>} />
+            <Route path="/membership" element={<PrivateRoute><KarmaPass /></PrivateRoute>} />
             <Route
               path="/browse"
               element={

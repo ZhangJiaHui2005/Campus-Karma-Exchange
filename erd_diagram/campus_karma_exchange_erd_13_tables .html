@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Karma Exchange - ERD 13 Tables</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#cbd5e1;
+      --pk:#f59e0b;
+      --fk:#2563eb;
+      --header:#12365f;
+      --header2:#1d4f86;
+      --shadow:0 8px 22px rgba(15,23,42,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,Segoe UI,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .page{
+      max-width:1800px;
+      margin:auto;
+      padding:28px;
+    }
+    h1{
+      margin:0;
+      text-align:center;
+      color:#0f2f57;
+      font-size:34px;
+      letter-spacing:.3px;
+    }
+    .subtitle{
+      text-align:center;
+      color:var(--muted);
+      margin:8px 0 26px;
+      font-size:16px;
+    }
+    .legend{
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-bottom:22px;
+      font-size:14px;
+      color:#475569;
+    }
+    .legend b{color:#111827}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(280px,1fr));
+      gap:18px;
+      align-items:start;
+    }
+    .table{
+      background:var(--card);
+      border:1px solid #dbe3ee;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+    }
+    .table h2{
+      margin:0;
+      padding:12px 14px;
+      font-size:17px;
+      background:linear-gradient(135deg,var(--header),var(--header2));
+      color:#fff;
+      letter-spacing:.4px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+    }
+    th,td{
+      padding:8px 9px;
+      border-top:1px solid #edf1f6;
+      vertical-align:top;
+    }
+    th{
+      background:#f8fafc;
+      color:#475569;
+      font-weight:600;
+      text-align:left;
+    }
+    td.type{
+      color:#64748b;
+      white-space:nowrap;
+      width:26%;
+    }
+    td.note{
+      color:#64748b;
+      font-size:12px;
+    }
+    .key{
+      display:inline-flex;
+      width:27px;
+      justify-content:center;
+      font-weight:800;
+      margin-right:5px;
+    }
+    .pk{color:var(--pk)}
+    .fk{color:var(--fk)}
+    .field{font-weight:600;color:#1e293b}
+    .relations{
+      margin-top:26px;
+      background:#fff;
+      border:1px solid #dbe3ee;
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      padding:20px 22px;
+    }
+    .relations h3{
+      margin:0 0 14px;
+      color:#0f2f57;
+    }
+    .rel-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(260px,1fr));
+      gap:10px 18px;
+      font-size:14px;
+    }
+    .rel{
+      padding:9px 10px;
+      border:1px solid #e5eaf1;
+      border-radius:8px;
+      background:#fbfdff;
+    }
+    .rel code{
+      color:#0f3d6e;
+      font-weight:700;
+      font-family:Consolas,monospace;
+    }
+    .foot{
+      text-align:center;
+      color:#64748b;
+      font-size:12px;
+      margin-top:16px;
+    }
+    @media (max-width:1350px){
+      .grid{grid-template-columns:repeat(3,minmax(280px,1fr))}
+      .rel-grid{grid-template-columns:repeat(2,minmax(260px,1fr))}
+    }
+    @media (max-width:980px){
+      .grid{grid-template-columns:repeat(2,minmax(260px,1fr))}
+      .rel-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:640px){
+      .page{padding:14px}
+      h1{font-size:26px}
+      .grid{grid-template-columns:1fr}
+    }
+    @media print{
+      body{background:white}
+      .page{max-width:none;padding:10px}
+      .table,.relations{box-shadow:none;break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <h1>ERD – CAMPUS KARMA EXCHANGE</h1>
+  <div class="subtitle">13 bảng tổng thể · PostgreSQL / Prisma ORM / ExpressJS / Node.js</div>
+
+  <div class="legend">
+    <span><b class="pk">PK</b> Primary Key</span>
+    <span><b class="fk">FK</b> Foreign Key</span>
+    <span><b>UUID</b> dùng thống nhất cho khóa chính / khóa ngoại</span>
+  </div>
+
+  <section class="grid">
+
+    <div class="table">
+      <h2>1. ADMINS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">admin_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="field">email</span></td><td class="type">VARCHAR</td><td class="note">UNIQUE</td></tr>
+        <tr><td><span class="field">password_hash</span></td><td class="type">VARCHAR</td><td class="note"></td></tr>
+        <tr><td><span class="field">full_name</span></td><td class="type">VARCHAR</td><td class="note"></td></tr>
+        <tr><td><span class="field">role</span></td><td class="type">ENUM</td><td class="note">SUPER_ADMIN, MODERATOR</td></tr>
+        <tr><td><span class="field">last_login_at</span></td><td class="type">TIMESTAMP</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">is_active</span></td><td class="type">BOOLEAN</td><td class="note">DEFAULT TRUE</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">updated_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>2. USERS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">user_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">level_id</span></td><td class="type">UUID</td><td class="note">→ LEVELS</td></tr>
+        <tr><td><span class="field">email</span></td><td class="type">VARCHAR</td><td class="note">UNIQUE</td></tr>
+        <tr><td><span class="field">password_hash</span></td><td class="type">VARCHAR</td><td class="note">NULL cho OAuth</td></tr>
+        <tr><td><span class="field">google_id</span></td><td class="type">VARCHAR</td><td class="note">NULL, UNIQUE</td></tr>
+        <tr><td><span class="field">full_name</span></td><td class="type">VARCHAR</td><td class="note"></td></tr>
+        <tr><td><span class="field">student_code</span></td><td class="type">VARCHAR</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">phone_number</span></td><td class="type">VARCHAR</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">avatar_url</span></td><td class="type">VARCHAR</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">karma_balance</span></td><td class="type">INT</td><td class="note">DEFAULT 100</td></tr>
+        <tr><td><span class="field">is_verified</span></td><td class="type">BOOLEAN</td><td class="note">DEFAULT FALSE</td></tr>
+        <tr><td><span class="field">status</span></td><td class="type">ENUM</td><td class="note">ACTIVE, SUSPENDED, PENDING</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">updated_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>3. LEVELS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">level_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="field">level_name</span></td><td class="type">VARCHAR</td><td class="note"></td></tr>
+        <tr><td><span class="field">min_karma</span></td><td class="type">INT</td><td class="note"></td></tr>
+        <tr><td><span class="field">max_karma</span></td><td class="type">INT</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">borrow_limit</span></td><td class="type">INT</td><td class="note"></td></tr>
+        <tr><td><span class="field">deposit_discount_pct</span></td><td class="type">DECIMAL</td><td class="note"></td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">updated_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>4. CATEGORIES</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">category_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="field">category_name</span></td><td class="type">VARCHAR</td><td class="note">UNIQUE</td></tr>
+        <tr><td><span class="field">icon</span></td><td class="type">VARCHAR</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">updated_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>5. ITEMS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">item_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">owner_id</span></td><td class="type">UUID</td><td class="note">→ USERS</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">category_id</span></td><td class="type">UUID</td><td class="note">→ CATEGORIES</td></tr>
+        <tr><td><span class="field">title</span></td><td class="type">VARCHAR</td><td class="note"></td></tr>
+        <tr><td><span class="field">description</span></td><td class="type">TEXT</td><td class="note"></td></tr>
+        <tr><td><span class="field">condition</span></td><td class="type">VARCHAR</td><td class="note"></td></tr>
+        <tr><td><span class="field">type</span></td><td class="type">ENUM</td><td class="note">GIVE, LEND</td></tr>
+        <tr><td><span class="field">karma_value</span></td><td class="type">INT</td><td class="note"></td></tr>
+        <tr><td><span class="field">status</span></td><td class="type">ENUM</td><td class="note">AVAILABLE, LOCKED, DONE, REMOVED</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">updated_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>6. TRANSACTIONS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">trans_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">item_id</span></td><td class="type">UUID</td><td class="note">→ ITEMS</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">lender_id</span></td><td class="type">UUID</td><td class="note">→ USERS</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">borrower_id</span></td><td class="type">UUID</td><td class="note">→ USERS</td></tr>
+        <tr><td><span class="field">transaction_type</span></td><td class="type">ENUM</td><td class="note">GIVE, LEND</td></tr>
+        <tr><td><span class="field">karma_amount</span></td><td class="type">INT</td><td class="note"></td></tr>
+        <tr><td><span class="field">deposit_amount</span></td><td class="type">INT</td><td class="note">DEFAULT 0</td></tr>
+        <tr><td><span class="field">qr_code_hash</span></td><td class="type">VARCHAR</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">status</span></td><td class="type">ENUM</td><td class="note">PENDING, ESCROWED, COMPLETED, CANCELLED, RETURNED</td></tr>
+        <tr><td><span class="field">due_date</span></td><td class="type">TIMESTAMP</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">completed_at</span></td><td class="type">TIMESTAMP</td><td class="note">NULL</td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>7. ESCROW_LOGS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">escrow_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">trans_id</span></td><td class="type">UUID</td><td class="note">→ TRANSACTIONS</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">user_id</span></td><td class="type">UUID</td><td class="note">→ USERS</td></tr>
+        <tr><td><span class="field">locked_karma</span></td><td class="type">INT</td><td class="note"></td></tr>
+        <tr><td><span class="field">status</span></td><td class="type">ENUM</td><td class="note">LOCKED, RELEASED, REFUNDED</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">updated_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>8. PAYMENTS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">payment_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">user_id</span></td><td class="type">UUID</td><td class="note">→ USERS</td></tr>
+        <tr><td><span class="field">amount_vnd</span></td><td class="type">INT</td><td class="note"></td></tr>
+        <tr><td><span class="field">karma_received</span></td><td class="type">INT</td><td class="note">DEFAULT 0</td></tr>
+        <tr><td><span class="field">payment_gateway</span></td><td class="type">VARCHAR</td><td class="note">VNPay Sandbox</td></tr>
+        <tr><td><span class="field">transaction_ref</span></td><td class="type">VARCHAR</td><td class="note">UNIQUE</td></tr>
+        <tr><td><span class="field">purpose</span></td><td class="type">ENUM</td><td class="note">KARMA_TOPUP, MEMBERSHIP</td></tr>
+        <tr><td><span class="field">status</span></td><td class="type">ENUM</td><td class="note">PENDING, SUCCESS, FAILED, CANCELLED</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">paid_at</span></td><td class="type">TIMESTAMP</td><td class="note">NULL</td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>9. MEMBERSHIPS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">membership_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">user_id</span></td><td class="type">UUID</td><td class="note">→ USERS</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">payment_id</span></td><td class="type">UUID</td><td class="note">NULL → PAYMENTS</td></tr>
+        <tr><td><span class="field">plan_type</span></td><td class="type">ENUM</td><td class="note">KARMA_PASS</td></tr>
+        <tr><td><span class="field">payment_method</span></td><td class="type">ENUM</td><td class="note">VNPAY, KARMA</td></tr>
+        <tr><td><span class="field">karma_cost</span></td><td class="type">INT</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">price_vnd</span></td><td class="type">INT</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">start_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">end_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">status</span></td><td class="type">ENUM</td><td class="note">ACTIVE, EXPIRED, CANCELLED</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>10. INSURANCE_FUND_LOGS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">log_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">trans_id</span></td><td class="type">UUID</td><td class="note">→ TRANSACTIONS</td></tr>
+        <tr><td><span class="field">amount_karma</span></td><td class="type">INT</td><td class="note"></td></tr>
+        <tr><td><span class="field">rate_pct</span></td><td class="type">DECIMAL</td><td class="note">1–2%</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>11. REVIEWS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">review_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">trans_id</span></td><td class="type">UUID</td><td class="note">→ TRANSACTIONS</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">reviewer_id</span></td><td class="type">UUID</td><td class="note">→ USERS</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">reviewee_id</span></td><td class="type">UUID</td><td class="note">→ USERS</td></tr>
+        <tr><td><span class="field">rating_stars</span></td><td class="type">SMALLINT</td><td class="note">CHECK 1..5</td></tr>
+        <tr><td><span class="field">comment</span></td><td class="type">TEXT</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">status</span></td><td class="type">ENUM</td><td class="note">VISIBLE, HIDDEN</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">hidden_by</span></td><td class="type">UUID</td><td class="note">NULL → ADMINS</td></tr>
+        <tr><td><span class="field">hidden_at</span></td><td class="type">TIMESTAMP</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">updated_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td colspan="3" class="note"><b>UNIQUE(trans_id, reviewer_id)</b></td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>12. REPORTS</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">report_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">reporter_id</span></td><td class="type">UUID</td><td class="note">→ USERS</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">review_id</span></td><td class="type">UUID</td><td class="note">→ REVIEWS</td></tr>
+        <tr><td><span class="field">reason</span></td><td class="type">VARCHAR</td><td class="note"></td></tr>
+        <tr><td><span class="field">description</span></td><td class="type">TEXT</td><td class="note">NULL</td></tr>
+        <tr><td><span class="field">status</span></td><td class="type">ENUM</td><td class="note">PENDING, RESOLVED, REJECTED</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">reviewed_by</span></td><td class="type">UUID</td><td class="note">NULL → ADMINS</td></tr>
+        <tr><td><span class="field">created_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">reviewed_at</span></td><td class="type">TIMESTAMP</td><td class="note">NULL</td></tr>
+      </table>
+    </div>
+
+    <div class="table">
+      <h2>13. MESSAGES</h2>
+      <table>
+        <tr><td><span class="key pk">PK</span><span class="field">message_id</span></td><td class="type">UUID</td><td class="note"></td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">trans_id</span></td><td class="type">UUID</td><td class="note">→ TRANSACTIONS</td></tr>
+        <tr><td><span class="key fk">FK</span><span class="field">sender_id</span></td><td class="type">UUID</td><td class="note">→ USERS</td></tr>
+        <tr><td><span class="field">content</span></td><td class="type">TEXT</td><td class="note"></td></tr>
+        <tr><td><span class="field">is_read</span></td><td class="type">BOOLEAN</td><td class="note">DEFAULT FALSE</td></tr>
+        <tr><td><span class="field">sent_at</span></td><td class="type">TIMESTAMP</td><td class="note"></td></tr>
+        <tr><td><span class="field">read_at</span></td><td class="type">TIMESTAMP</td><td class="note">NULL</td></tr>
+      </table>
+    </div>
+
+  </section>
+
+  <section class="relations">
+    <h3>Quan hệ chính</h3>
+    <div class="rel-grid">
+      <div class="rel"><code>LEVELS 1 — N USERS</code> · users.level_id</div>
+      <div class="rel"><code>USERS 1 — N ITEMS</code> · items.owner_id</div>
+      <div class="rel"><code>CATEGORIES 1 — N ITEMS</code> · items.category_id</div>
+      <div class="rel"><code>ITEMS 1 — N TRANSACTIONS</code> · transactions.item_id</div>
+      <div class="rel"><code>USERS 1 — N TRANSACTIONS</code> · lender_id</div>
+      <div class="rel"><code>USERS 1 — N TRANSACTIONS</code> · borrower_id</div>
+      <div class="rel"><code>TRANSACTIONS 1 — N ESCROW_LOGS</code></div>
+      <div class="rel"><code>USERS 1 — N ESCROW_LOGS</code></div>
+      <div class="rel"><code>USERS 1 — N PAYMENTS</code></div>
+      <div class="rel"><code>USERS 1 — N MEMBERSHIPS</code></div>
+      <div class="rel"><code>PAYMENTS 0..1 — 0..1 MEMBERSHIPS</code></div>
+      <div class="rel"><code>TRANSACTIONS 1 — 0..N INSURANCE_FUND_LOGS</code></div>
+      <div class="rel"><code>TRANSACTIONS 1 — N REVIEWS</code></div>
+      <div class="rel"><code>USERS 1 — N REVIEWS</code> · reviewer_id</div>
+      <div class="rel"><code>USERS 1 — N REVIEWS</code> · reviewee_id</div>
+      <div class="rel"><code>ADMINS 1 — 0..N REVIEWS</code> · hidden_by</div>
+      <div class="rel"><code>REVIEWS 1 — N REPORTS</code></div>
+      <div class="rel"><code>USERS 1 — N REPORTS</code></div>
+      <div class="rel"><code>ADMINS 1 — 0..N REPORTS</code></div>
+      <div class="rel"><code>TRANSACTIONS 1 — N MESSAGES</code></div>
+      <div class="rel"><code>USERS 1 — N MESSAGES</code></div>
+    </div>
+  </section>
+
+  <div class="foot">Campus Karma Exchange · Master ERD · 13 tables</div>
+</div>
+</body>
+</html>
