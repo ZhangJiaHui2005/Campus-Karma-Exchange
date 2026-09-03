@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { PayOS } from '@payos/node';
 import prisma from '../utils/prisma.js';
+import { syncUserLevel } from '../services/levelService.js';
 
 const getRequiredConfig = (name) => {
   const value = process.env[name];
@@ -100,6 +101,7 @@ export const processPayOSWebhook = async (webhook) => {
         where: { user_id: payment.user_id },
         data: { karma_balance: { increment: payment.karma_received } },
       });
+      await syncUserLevel(payment.user_id, transaction);
     }
 
     if (payment.purpose === 'MEMBERSHIP') {
@@ -166,6 +168,7 @@ export const confirmKarmaTopup = async (req, res) => {
             where: { user_id: payment.user_id },
             data: { karma_balance: { increment: payment.karma_received } },
           });
+          await syncUserLevel(payment.user_id, transaction);
         }
         if (payment.purpose === 'MEMBERSHIP') {
           await transaction.memberships.updateMany({
