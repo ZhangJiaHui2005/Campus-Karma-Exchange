@@ -15,7 +15,6 @@ import { Link } from "react-router-dom";
 import { Recycle } from "lucide-react";
 import { useEffect, useState } from "react";
 
-
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export function NavigationBar() {
@@ -67,9 +66,13 @@ export function NavigationBar() {
           className="bg-transparent dark:bg-transparent px-0 py-3"
         >
           <NavbarBrand as={Link} to="/">
-          <div className="inline-flex items-center justify-center w-10 h-10 mr-2 rounded-full overflow-hidden ">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
-          </div>
+            <div className="inline-flex items-center justify-center w-10 h-10 mr-2 rounded-full overflow-hidden ">
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </NavbarBrand>
 
           <div className="flex md:order-2">

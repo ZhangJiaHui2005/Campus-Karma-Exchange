@@ -231,7 +231,9 @@ export default function AdminDashboard() {
               aria-label="Thông báo"
             >
               <Bell size={20} />
-              <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" />
+              {notifications.some((notification) => !notification.read_at) && (
+                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" />
+              )}
             </button>
             {panel === "notifications" && (
               <div className="absolute right-16 top-16 z-20 w-80 rounded-xl border border-slate-200 bg-white p-4 shadow-xl">

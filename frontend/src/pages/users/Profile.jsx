@@ -34,61 +34,6 @@ import {
   Flame,
 } from "lucide-react";
 import UserLayout from "../../layouts/UserLayout";
-import {
-  adjustUserLevel,
-  getUserLevelStatus,
-} from "../../services/userService";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-
-// Cấu hình visual cho từng Level (Huy hiệu & màu sắc phong cách gaming/fintech)
-const LEVEL_CONFIGS = {
-  1: {
-    id: 1,
-    name: "Tân thủ",
-    title: "Mầm Non Tín Nhiệm",
-    motto: "Khởi đầu hành trình chia sẻ đồ dùng văn minh",
-    badgeColor: "emerald",
-    gradient: "from-emerald-500 via-teal-600 to-green-700",
-    bgLight: "bg-emerald-50 dark:bg-emerald-950/30",
-    borderLight: "border-emerald-200 dark:border-emerald-800",
-    textColor: "text-emerald-700 dark:text-emerald-300",
-    icon: Shield,
-    iconColor: "text-emerald-500",
-    ringColor: "ring-emerald-400/50",
-    tag: "Cấp 1 - Mầm non",
-  },
-  2: {
-    id: 2,
-    name: "Tích cực",
-    title: "Hiệp Sĩ Năng Động",
-    motto: "Thành viên tích cực, xây dựng uy tín cộng đồng",
-    badgeColor: "cyan",
-    gradient: "from-sky-500 via-blue-600 to-indigo-700",
-    bgLight: "bg-sky-50 dark:bg-sky-950/30",
-    borderLight: "border-sky-200 dark:border-sky-800",
-    textColor: "text-sky-700 dark:text-sky-300",
-    icon: Star,
-    iconColor: "text-sky-400",
-    ringColor: "ring-sky-400/50",
-    tag: "Cấp 2 - Uy tín cao",
-  },
-  3: {
-    id: 3,
-    name: "Đại sứ Xanh",
-    title: "Đại Sứ Xanh Tối Cao",
-    motto: "Biểu tượng tín nhiệm & văn hóa chia sẻ tinh hoa",
-    badgeColor: "amber",
-    gradient: "from-amber-400 via-orange-500 to-yellow-600",
-    bgLight: "bg-amber-50 dark:bg-amber-950/30",
-    borderLight: "border-amber-200 dark:border-amber-800",
-    textColor: "text-amber-800 dark:text-amber-300",
-    icon: Crown,
-    iconColor: "text-amber-400",
-    ringColor: "ring-amber-400/50",
-    tag: "Cấp 3 - Tối cao",
-  },
-};
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -96,37 +41,32 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState("");
-  const [actionNotification, setActionNotification] = useState(null);
 
-  // State cho bộ điều khiển test API
-  const [customKarmaAmount, setCustomKarmaAmount] = useState("50");
-  const [showSimulator, setShowSimulator] = useState(true);
-  const [activeTabLevel, setActiveTabLevel] = useState(null);
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   const fetchProfileData = async () => {
     try {
       setLoading(true);
       setError("");
-
-      const [resProfile, resLevel] = await Promise.all([
-        fetch(`${API_URL}/auth/me`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }),
-        getUserLevelStatus().catch(() => null),
-      ]);
-
-      const dataProfile = await resProfile.json();
-      if (!resProfile.ok)
-        throw new Error(dataProfile.message || "Không thể tải thông tin profile");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!res.ok)
+        throw new Error(data.message || "Không thể tải thông tin profile");
 
       const currentUser = dataProfile.user || dataProfile.data;
       setUser(currentUser);
 
       if (resLevel?.data) {
         setLevelStatus(resLevel.data);
-        setActiveTabLevel(resLevel.data.level?.level_id || currentUser?.level_id || 1);
+        setActiveTabLevel(
+          resLevel.data.level?.level_id || currentUser?.level_id || 1,
+        );
       }
     } catch (err) {
       setError(err.message);
@@ -134,10 +74,6 @@ export default function Profile() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchProfileData();
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -230,19 +166,45 @@ export default function Profile() {
   const LevelIcon = currentLevelInfo.icon;
 
   const allLevels = levelStatus?.all_levels || [
-    { level_id: 1, level_name: "Tân thủ", min_karma: 0, max_karma: 200, borrow_limit: 2, deposit_discount_pct: 0 },
-    { level_id: 2, level_name: "Tích cực", min_karma: 201, max_karma: 1000, borrow_limit: 5, deposit_discount_pct: 20 },
-    { level_id: 3, level_name: "Đại sứ Xanh", min_karma: 1001, max_karma: 999999, borrow_limit: 10, deposit_discount_pct: 50 },
+    {
+      level_id: 1,
+      level_name: "Tân thủ",
+      min_karma: 0,
+      max_karma: 200,
+      borrow_limit: 2,
+      deposit_discount_pct: 0,
+    },
+    {
+      level_id: 2,
+      level_name: "Tích cực",
+      min_karma: 201,
+      max_karma: 1000,
+      borrow_limit: 5,
+      deposit_discount_pct: 20,
+    },
+    {
+      level_id: 3,
+      level_name: "Đại sứ Xanh",
+      min_karma: 1001,
+      max_karma: 999999,
+      borrow_limit: 10,
+      deposit_discount_pct: 50,
+    },
   ];
 
   const progress = levelStatus?.progress || {
-    progressPct: Math.min(100, Math.round(((user.karma_balance || 0) / 200) * 100)),
+    progressPct: Math.min(
+      100,
+      Math.round(((user.karma_balance || 0) / 200) * 100),
+    ),
     karmaNeeded: Math.max(0, 201 - (user.karma_balance || 0)),
     nextLevel: allLevels[1],
     isMaxLevel: currentLevelId === 3,
   };
 
-  const selectedTier = allLevels.find((l) => l.level_id === (activeTabLevel || currentLevelId)) || user.level;
+  const selectedTier =
+    allLevels.find((l) => l.level_id === (activeTabLevel || currentLevelId)) ||
+    user.level;
 
   return (
     <UserLayout>
@@ -254,10 +216,10 @@ export default function Profile() {
               actionNotification.type === "success"
                 ? "success"
                 : actionNotification.type === "warning"
-                ? "warning"
-                : actionNotification.type === "failure"
-                ? "failure"
-                : "info"
+                  ? "warning"
+                  : actionNotification.type === "failure"
+                    ? "failure"
+                    : "info"
             }
             onDismiss={() => setActionNotification(null)}
             className="shadow-md transition-all duration-300"
@@ -465,7 +427,10 @@ export default function Profile() {
               <ul className="list-disc list-inside space-y-1 text-gray-500 dark:text-gray-400 pl-1">
                 <li>Dùng để ký quỹ và đặt cọc khi mượn đồ dùng sinh viên.</li>
                 <li>Tự động xác định đẳng cấp & quyền hạn mượn đồ.</li>
-                <li>Có thể tích lũy thêm thông qua hoàn thành nhiệm vụ & chia sẻ đồ.</li>
+                <li>
+                  Có thể tích lũy thêm thông qua hoàn thành nhiệm vụ & chia sẻ
+                  đồ.
+                </li>
               </ul>
             </div>
           </div>
@@ -525,7 +490,8 @@ export default function Profile() {
                   </p>
                   <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold pt-1">
                     Khoảng điểm cấp độ: {user.level?.min_karma ?? 0} -{" "}
-                    {user.level?.max_karma?.toLocaleString("vi-VN") ?? "200"} Karma
+                    {user.level?.max_karma?.toLocaleString("vi-VN") ?? "200"}{" "}
+                    Karma
                   </p>
                 </div>
               </div>
@@ -615,7 +581,9 @@ export default function Profile() {
                   <p className="text-base font-black text-gray-900 dark:text-white">
                     Tối đa {selectedTier?.borrow_limit ?? 2} món
                   </p>
-                  <p className="text-[11px] text-gray-400">cùng một thời điểm</p>
+                  <p className="text-[11px] text-gray-400">
+                    cùng một thời điểm
+                  </p>
                 </div>
 
                 {/* Đặc quyền 2: Giảm cọc */}
@@ -627,7 +595,9 @@ export default function Profile() {
                   <p className="text-base font-black text-emerald-600 dark:text-emerald-400">
                     Giảm {selectedTier?.deposit_discount_pct ?? 0}% cọc
                   </p>
-                  <p className="text-[11px] text-gray-400">tiết kiệm điểm đặt cọc</p>
+                  <p className="text-[11px] text-gray-400">
+                    tiết kiệm điểm đặt cọc
+                  </p>
                 </div>
 
                 {/* Đặc quyền 3: Quyền chat */}
@@ -647,7 +617,9 @@ export default function Profile() {
                       </span>
                     )}
                   </p>
-                  <p className="text-[11px] text-gray-400">trao đổi với người mượn</p>
+                  <p className="text-[11px] text-gray-400">
+                    trao đổi với người mượn
+                  </p>
                 </div>
               </div>
             </div>
@@ -670,13 +642,19 @@ export default function Profile() {
                     </Badge>
                   </h3>
                   <p className="text-xs text-indigo-200/80">
-                    Endpoint: <code className="bg-black/40 px-1.5 py-0.5 rounded text-indigo-300 font-mono">POST /api/users/level/adjust</code> (Tự động tính lên/xuống cấp theo Karma)
+                    Endpoint:{" "}
+                    <code className="bg-black/40 px-1.5 py-0.5 rounded text-indigo-300 font-mono">
+                      POST /api/users/level/adjust
+                    </code>{" "}
+                    (Tự động tính lên/xuống cấp theo Karma)
                   </p>
                 </div>
               </div>
 
               <div className="text-xs text-indigo-300 bg-indigo-900/40 px-3 py-1 rounded-lg border border-indigo-700/50">
-                Trạng thái: <strong>Level {currentLevelId}</strong> ({user.level?.level_name}) | <strong>{user.karma_balance} Karma</strong>
+                Trạng thái: <strong>Level {currentLevelId}</strong> (
+                {user.level?.level_name}) |{" "}
+                <strong>{user.karma_balance} Karma</strong>
               </div>
             </div>
 
@@ -692,7 +670,12 @@ export default function Profile() {
                     size="xs"
                     color="success"
                     disabled={actionLoading}
-                    onClick={() => handleAdjustLevel({ amount: 50, reason: "Test +50 Karma" })}
+                    onClick={() =>
+                      handleAdjustLevel({
+                        amount: 50,
+                        reason: "Test +50 Karma",
+                      })
+                    }
                     className="font-bold"
                   >
                     <ArrowUpCircle className="w-3.5 h-3.5 mr-1" />
@@ -703,7 +686,12 @@ export default function Profile() {
                     size="xs"
                     color="purple"
                     disabled={actionLoading}
-                    onClick={() => handleAdjustLevel({ amount: 250, reason: "Test +250 Karma (Thăng cấp)" })}
+                    onClick={() =>
+                      handleAdjustLevel({
+                        amount: 250,
+                        reason: "Test +250 Karma (Thăng cấp)",
+                      })
+                    }
                     className="font-bold"
                   >
                     <TrendingUp className="w-3.5 h-3.5 mr-1" />
@@ -714,7 +702,12 @@ export default function Profile() {
                     size="xs"
                     color="failure"
                     disabled={actionLoading}
-                    onClick={() => handleAdjustLevel({ amount: -150, reason: "Test -150 Karma (Hạ cấp)" })}
+                    onClick={() =>
+                      handleAdjustLevel({
+                        amount: -150,
+                        reason: "Test -150 Karma (Hạ cấp)",
+                      })
+                    }
                     className="font-bold"
                   >
                     <ArrowDownCircle className="w-3.5 h-3.5 mr-1" />
@@ -758,7 +751,12 @@ export default function Profile() {
                   <Button
                     color="light"
                     disabled={actionLoading || currentLevelId >= 3}
-                    onClick={() => handleAdjustLevel({ action: "level_up", reason: "Test Level Up" })}
+                    onClick={() =>
+                      handleAdjustLevel({
+                        action: "level_up",
+                        reason: "Test Level Up",
+                      })
+                    }
                     className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 font-bold"
                   >
                     <ArrowUpCircle className="w-4 h-4 mr-2 text-emerald-400" />
@@ -768,7 +766,12 @@ export default function Profile() {
                   <Button
                     color="light"
                     disabled={actionLoading || currentLevelId <= 1}
-                    onClick={() => handleAdjustLevel({ action: "level_down", reason: "Test Level Down" })}
+                    onClick={() =>
+                      handleAdjustLevel({
+                        action: "level_down",
+                        reason: "Test Level Down",
+                      })
+                    }
                     className="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-400/40 font-bold"
                   >
                     <ArrowDownCircle className="w-4 h-4 mr-2 text-red-400" />
@@ -777,7 +780,12 @@ export default function Profile() {
                 </div>
 
                 <p className="text-[11px] text-indigo-300/70 pt-1">
-                  💡 Sau này khi tích hợp hệ thống nhiệm vụ (missions), module missions chỉ cần gọi hàm <code className="text-yellow-300 font-mono">adjustUserKarmaAndLevel()</code> là level sẽ tự động nhảy tương ứng.
+                  💡 Sau này khi tích hợp hệ thống nhiệm vụ (missions), module
+                  missions chỉ cần gọi hàm{" "}
+                  <code className="text-yellow-300 font-mono">
+                    adjustUserKarmaAndLevel()
+                  </code>{" "}
+                  là level sẽ tự động nhảy tương ứng.
                 </p>
               </div>
             </div>

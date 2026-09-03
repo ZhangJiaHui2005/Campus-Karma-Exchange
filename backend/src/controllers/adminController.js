@@ -529,13 +529,23 @@ export const getAdminItems = async (req, res) => {
 
 export const getAdminActivity = async (_req, res) => {
   try {
-    const since = getSince(6);
-    const [posts, users] = await Promise.all([
+    const since = new Date();
+    since.setHours(0, 0, 0, 0);
+    since.setDate(since.getDate() - 6);
+    const [posts, users, payments, borrowRequests] = await Promise.all([
       prisma.item.findMany({
         where: { created_at: { gte: since } },
         select: { created_at: true },
       }),
       prisma.user.findMany({
+        where: { created_at: { gte: since } },
+        select: { created_at: true },
+      }),
+      prisma.payments.findMany({
+        where: { created_at: { gte: since } },
+        select: { created_at: true, status: true },
+      }),
+      prisma.borrowRequest.findMany({
         where: { created_at: { gte: since } },
         select: { created_at: true },
       }),
@@ -554,10 +564,22 @@ export const getAdminActivity = async (_req, res) => {
         new_users: users.filter(
           (user) => user.created_at >= date && user.created_at < next,
         ).length,
+        payments: payments.filter(
+          (payment) => payment.created_at >= date && payment.created_at < next,
+        ).length,
+        successful_payments: payments.filter(
+          (payment) =>
+            payment.created_at >= date &&
+            payment.created_at < next &&
+            payment.status === "SUCCESS",
+        ).length,
+        borrow_requests: borrowRequests.filter(
+          (request) => request.created_at >= date && request.created_at < next,
+        ).length,
       };
     });
 
-    return res.json({ success: true, activity: days, transactions: [] });
+    return res.json({ success: true, activity: days });
   } catch (error) {
     console.error("Get admin activity error:", error);
     return res

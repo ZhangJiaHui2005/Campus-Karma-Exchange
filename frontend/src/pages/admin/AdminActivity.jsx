@@ -63,6 +63,20 @@ export default function AdminActivity() {
           color="bg-violet-500"
           unit="người dùng"
         />
+        <Chart
+          title="Thanh toán"
+          values={activity.map((day) => day.payments || 0)}
+          dates={dates}
+          color="bg-sky-500"
+          unit="giao dịch"
+        />
+        <Chart
+          title="Yêu cầu mượn"
+          values={activity.map((day) => day.borrow_requests || 0)}
+          dates={dates}
+          color="bg-amber-500"
+          unit="yêu cầu"
+        />
       </div>
     </section>
   );

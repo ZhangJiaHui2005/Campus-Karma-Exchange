@@ -54,8 +54,8 @@ export const googleLogin = async (req, res) => {
       await prisma.adminNotification.create({
         data: {
           type: "USER_REGISTERED",
-          title: "Người dùng mới đăng ký",
-          message: `${user.full_name} (${user.email}) vừa tạo tài khoản.`,
+          title: "Yêu cầu duyệt trở thành người dùng",
+          message: `${user.full_name} (${user.email}) vừa gửi yêu cầu tham gia hệ thống.`,
           user_id: user.user_id,
         },
       });
