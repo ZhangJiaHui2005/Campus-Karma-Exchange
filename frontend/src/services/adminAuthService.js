@@ -66,6 +66,10 @@ export const deleteAdminBorrowRequest = (requestId) =>
 export const fetchAdminItems = (query = "") =>
   adminRequest(`items${query ? `?q=${encodeURIComponent(query)}` : ""}`);
 export const fetchAdminActivity = () => adminRequest("activity");
+export const deleteAdminNotification = (notificationId) =>
+  adminRequest(`notifications/${notificationId}`, { method: "DELETE" });
+export const fetchAdminPayments = (archived = false) =>
+  adminRequest(`payments${archived ? "?archived=true" : ""}`);
 export const fetchAdminBorrowRequests = () => adminRequest("borrow-requests");
 
 export const updateAdminUserBanStatus = async (userId, banned) => {

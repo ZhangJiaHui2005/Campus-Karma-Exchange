@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Users,
   X,
+  WalletCards,
 } from "lucide-react";
 import { Sidebar, SidebarItemGroup, SidebarItems } from "flowbite-react";
 import { useState } from "react";
@@ -23,10 +24,12 @@ import { useAdmin } from "../../context/AdminContext";
 import AdminUsers from "./AdminUsers";
 import AdminPosts from "./AdminPosts";
 import AdminActivity from "./AdminActivity";
+import AdminPayments from "./AdminPayments";
 import {
   fetchAdminDashboard,
   fetchAdminPendingApprovals,
   fetchAdminNotifications,
+  deleteAdminNotification,
   fetchAdminSystemReport,
 } from "../../services/adminAuthService";
 
@@ -64,6 +67,7 @@ export default function AdminDashboard() {
   const [notifications, setNotifications] = useState([]);
   const [systemReport, setSystemReport] = useState(null);
   const [pendingApprovals, setPendingApprovals] = useState(null);
+  const [deletingNotificationId, setDeletingNotificationId] = useState(null);
   const [panel, setPanel] = useState(null);
   const { admin, logout } = useAdmin();
   const adminPath = useLocation().pathname;
@@ -71,6 +75,8 @@ export default function AdminDashboard() {
   const isPostsPage =
     adminPath === "/admin/items" || adminPath === "/admin/borrow-requests";
   const isActivityPage = adminPath === "/admin/activity";
+  const isPaymentsPage = adminPath === "/admin/payments";
+  const isArchivePage = adminPath === "/admin/payment-archive";
 
   useEffect(() => {
     fetchAdminDashboard()
@@ -92,6 +98,22 @@ export default function AdminDashboard() {
           { name: "API admin", status: "ERROR", message: error.message },
         ],
       });
+    }
+  };
+
+  const removeNotification = async (notificationId) => {
+    setDeletingNotificationId(notificationId);
+    try {
+      await deleteAdminNotification(notificationId);
+      setNotifications((current) =>
+        current.filter(
+          (notification) => notification.notification_id !== notificationId,
+        ),
+      );
+    } catch (error) {
+      window.alert(error.message || "Không thể xóa thông báo");
+    } finally {
+      setDeletingNotificationId(null);
     }
   };
 
@@ -179,6 +201,20 @@ export default function AdminDashboard() {
                 <Activity size={19} />
                 Hoạt động
               </a>
+              <a
+                href="/admin/payments"
+                className={`flex items-center gap-3 rounded-xl px-4 py-3 ${isPaymentsPage ? "bg-emerald-50 text-emerald-700" : "text-slate-600 hover:bg-slate-50"}`}
+              >
+                <WalletCards size={19} />
+                Thanh toán
+              </a>
+              <a
+                href="/admin/payment-archive"
+                className={`flex items-center gap-3 rounded-xl px-4 py-3 ${isArchivePage ? "bg-emerald-50 text-emerald-700" : "text-slate-600 hover:bg-slate-50"}`}
+              >
+                <CircleDollarSign size={19} />
+                Lưu trữ hóa đơn
+              </a>
             </SidebarItemGroup>
           </SidebarItems>
 
@@ -243,20 +279,37 @@ export default function AdminDashboard() {
                     notifications.map((notification) => (
                       <div
                         key={notification.notification_id}
-                        className="border-b border-slate-100 pb-3 last:border-0"
+                        className="flex items-start gap-2 border-b border-slate-100 pb-3 last:border-0"
                       >
-                        <p className="text-sm font-semibold">
-                          {notification.title}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {notification.message}
-                        </p>
-                        <p className="mt-1 text-[11px] text-slate-400">
-                          {new Intl.DateTimeFormat("vi-VN", {
-                            dateStyle: "medium",
-                            timeStyle: "short",
-                          }).format(new Date(notification.created_at))}
-                        </p>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold">
+                            {notification.title}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            {notification.message}
+                          </p>
+                          <p className="mt-1 text-[11px] text-slate-400">
+                            {new Intl.DateTimeFormat("vi-VN", {
+                              dateStyle: "medium",
+                              timeStyle: "short",
+                            }).format(new Date(notification.created_at))}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          title="Xóa thông báo"
+                          aria-label={`Xóa thông báo: ${notification.title}`}
+                          disabled={
+                            deletingNotificationId ===
+                            notification.notification_id
+                          }
+                          onClick={() =>
+                            removeNotification(notification.notification_id)
+                          }
+                          className="shrink-0 rounded-md p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 disabled:cursor-wait disabled:opacity-50"
+                        >
+                          <X size={14} />
+                        </button>
                       </div>
                     ))
                   ) : (
@@ -282,6 +335,10 @@ export default function AdminDashboard() {
             />
           ) : isActivityPage ? (
             <AdminActivity />
+          ) : isPaymentsPage ? (
+            <AdminPayments />
+          ) : isArchivePage ? (
+            <AdminPayments archived />
           ) : (
             <>
               <section className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">

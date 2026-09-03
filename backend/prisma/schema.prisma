@@ -171,8 +171,11 @@ model Payments {
   status          PaymentStatus
   created_at      DateTime       @default(now())
   paid_at         DateTime?
+  archived_at     DateTime?
   user            User           @relation(fields: [user_id], references: [user_id])
   membership      Memberships?
+
+  @@index([archived_at])
 }
 
 model Memberships {

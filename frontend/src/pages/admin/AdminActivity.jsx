@@ -3,22 +3,26 @@ import { RefreshCw } from "lucide-react";
 import { fetchAdminActivity } from "../../services/adminAuthService";
 
 const Chart = ({ title, values, dates, color, unit }) => {
-  const max = Math.max(...values, 1);
+  const numericValues = values.map((value) => Number(value) || 0);
+  const max = Math.max(...numericValues, 1);
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div>
         <h3 className="font-bold">{title}</h3>
         <p className="mt-1 text-sm text-slate-500">7 ngày gần nhất</p>
       </div>
-      <div className="mt-8 flex h-56 items-end gap-3">
-        {values.map((value, index) => (
-          <div key={index} className="flex flex-1 flex-col items-center gap-2">
+      <div className="relative mt-8 flex h-56 items-end gap-3 border-b border-slate-200 bg-slate-50/50 px-2 pt-4">
+        {numericValues.map((value, index) => (
+          <div
+            key={index}
+            className="flex h-full flex-1 flex-col items-center justify-end gap-2"
+          >
             <span className="text-xs font-semibold text-slate-600">
               {value}
             </span>
             <div
               className={`w-full rounded-t-lg ${color}`}
-              style={{ height: `${(value / max) * 100}%` }}
+              style={{ height: value > 0 ? `${(value / max) * 100}%` : "4px" }}
             />
             <span className="text-xs text-slate-400">{dates[index]}</span>
           </div>

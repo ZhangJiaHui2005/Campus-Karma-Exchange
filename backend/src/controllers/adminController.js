@@ -469,6 +469,54 @@ export const getAdminNotifications = async (_req, res) => {
   }
 };
 
+export const getAdminPayments = async (req, res) => {
+  try {
+    const archived = req.query.archived === "true";
+    const payments = await prisma.payments.findMany({
+      where: {
+        purpose: "KARMA_TOPUP",
+        archived_at: archived ? { not: null } : null,
+      },
+      orderBy: { created_at: "desc" },
+      include: {
+        user: { select: { user_id: true, full_name: true, email: true } },
+      },
+    });
+    return res.json({ success: true, payments });
+  } catch (error) {
+    console.error("Get admin payments error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Không thể tải danh sách thanh toán" });
+  }
+};
+
+export const deleteAdminNotification = async (req, res) => {
+  const notificationId = Number.parseInt(req.params.id, 10);
+  if (!Number.isInteger(notificationId) || notificationId <= 0) {
+    return res
+      .status(400)
+      .json({ success: false, message: "ID thông báo không hợp lệ" });
+  }
+
+  try {
+    await prisma.adminNotification.delete({
+      where: { notification_id: notificationId },
+    });
+    return res.json({ success: true, message: "Đã xóa thông báo" });
+  } catch (error) {
+    if (error.code === "P2025") {
+      return res
+        .status(404)
+        .json({ success: false, message: "Không tìm thấy thông báo" });
+    }
+    console.error("Delete admin notification error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Không thể xóa thông báo" });
+  }
+};
+
 export const getAdminSystemReport = async (_req, res) => {
   const startedAt = Date.now();
   const checks = [];

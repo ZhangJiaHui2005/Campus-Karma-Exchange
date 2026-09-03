@@ -2,6 +2,12 @@ import crypto from "node:crypto";
 import { PayOS } from "@payos/node";
 import prisma from "../utils/prisma.js";
 import { syncUserLevel } from "../services/levelService.js";
+import { PAYMENT_EXPIRY_MINUTES } from "../jobs/paymentExpiryJob.js";
+
+const isPaymentExpired = (payment, now = new Date()) =>
+  payment.status === "PENDING" &&
+  now.getTime() - payment.created_at.getTime() >=
+    PAYMENT_EXPIRY_MINUTES * 60 * 1000;
 
 const getRequiredConfig = (name) => {
   const value = process.env[name];
@@ -107,9 +113,18 @@ export const processPayOSWebhook = async (webhook) => {
     }
     if (payment.status === "SUCCESS")
       return { code: "00", message: "Already confirmed" };
+    if (payment.status !== "PENDING")
+      return { code: "00", message: "Payment already finalized" };
+    if (isPaymentExpired(payment)) {
+      await transaction.payments.updateMany({
+        where: { payment_id: payment.payment_id, status: "PENDING" },
+        data: { status: "CANCELLED" },
+      });
+      return { code: "01", message: "Payment expired" };
+    }
 
     const updatedPayments = await transaction.payments.updateMany({
-      where: { payment_id: payment.payment_id, status: { not: "SUCCESS" } },
+      where: { payment_id: payment.payment_id, status: "PENDING" },
       data: {
         status: paymentStatus,
         paid_at: paymentStatus === "SUCCESS" ? new Date() : null,
@@ -168,18 +183,38 @@ export const confirmKarmaTopup = async (req, res) => {
         .json({ success: false, message: "Không tìm thấy giao dịch." });
     }
     if (payment.user_id !== req.user.user_id) {
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: "Không có quyền xác nhận giao dịch này.",
-        });
+      return res.status(403).json({
+        success: false,
+        message: "Không có quyền xác nhận giao dịch này.",
+      });
     }
     if (payment.status === "SUCCESS") {
       return res.json({
         success: true,
         message: "Giao dịch đã được xác nhận trước đó.",
         alreadyConfirmed: true,
+      });
+    }
+    if (payment.status !== "PENDING") {
+      return res.status(400).json({
+        success: false,
+        message:
+          payment.status === "CANCELLED"
+            ? "Giao dịch đã bị hủy."
+            : "Giao dịch đã kết thúc.",
+        cancelled: payment.status === "CANCELLED",
+        failed: payment.status === "FAILED",
+      });
+    }
+    if (isPaymentExpired(payment)) {
+      await prisma.payments.updateMany({
+        where: { payment_id: payment.payment_id, status: "PENDING" },
+        data: { status: "CANCELLED" },
+      });
+      return res.status(400).json({
+        success: false,
+        message: "Giao dịch đã hết hạn sau 5 phút.",
+        cancelled: true,
       });
     }
 
@@ -191,18 +226,16 @@ export const confirmKarmaTopup = async (req, res) => {
       payosStatus = payosResult.status;
     } catch (err) {
       console.error("PayOS Get Payment Error:", err);
-      return res
-        .status(502)
-        .json({
-          success: false,
-          message: "Không thể xác minh trạng thái từ PayOS.",
-        });
+      return res.status(502).json({
+        success: false,
+        message: "Không thể xác minh trạng thái từ PayOS.",
+      });
     }
 
     if (payosStatus === "PAID") {
       const result = await prisma.$transaction(async (transaction) => {
         const updated = await transaction.payments.updateMany({
-          where: { payment_id: payment.payment_id, status: { not: "SUCCESS" } },
+          where: { payment_id: payment.payment_id, status: "PENDING" },
           data: { status: "SUCCESS", paid_at: new Date() },
         });
         if (updated.count === 0) return { alreadyConfirmed: true };
@@ -231,29 +264,25 @@ export const confirmKarmaTopup = async (req, res) => {
 
     if (payosStatus === "CANCELLED") {
       await prisma.payments.updateMany({
-        where: { payment_id: payment.payment_id, status: { not: "SUCCESS" } },
+        where: { payment_id: payment.payment_id, status: "PENDING" },
         data: { status: "CANCELLED" },
       });
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Giao dịch đã bị hủy.",
-          cancelled: true,
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Giao dịch đã bị hủy.",
+        cancelled: true,
+      });
     }
 
     await prisma.payments.updateMany({
-      where: { payment_id: payment.payment_id, status: { not: "SUCCESS" } },
+      where: { payment_id: payment.payment_id, status: "PENDING" },
       data: { status: "FAILED" },
     });
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Thanh toán không thành công.",
-        failed: true,
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Thanh toán không thành công.",
+      failed: true,
+    });
   } catch (error) {
     console.error("Confirm Karma Topup Error:", error);
     return res
