@@ -153,7 +153,7 @@ export const createItem = async (req, res) => {
         type: type.trim().toUpperCase(),
         location: location?.trim() || null,
         image_url: image_url?.trim() || null,
-        status: "PENDING",
+        status: "AVAILABLE",
       },
       include: itemInclude,
     });
@@ -258,3 +258,19 @@ export const deleteItem = async (req, res) => {
       .json({ success: false, message: "Khong the xoa vat pham" });
   }
 };
+
+// GET /api/items/my — Vật phẩm của chính mình
+export const getMyItems = async (req, res) => {
+  try {
+    const items = await prisma.item.findMany({
+      where: { owner_id: req.user.user_id },
+      include: itemInclude,
+      orderBy: { created_at: "desc" },
+    });
+    return res.json({ success: true, items });
+  } catch (error) {
+    console.error("Get my items error:", error);
+    return res.status(500).json({ success: false, message: "Khong the tai vat pham" });
+  }
+};
+

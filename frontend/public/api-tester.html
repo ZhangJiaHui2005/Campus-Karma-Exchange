@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>🧪 Campus Karma - API Tester</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+  body { background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 24px; }
+  h1 { font-size: 1.5rem; font-weight: 800; color: #10b981; margin-bottom: 4px; }
+  .subtitle { color: #64748b; font-size: 0.85rem; margin-bottom: 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 16px; }
+  .card h2 { font-size: 0.9rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+  button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 14px; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; }
+  .btn-green { background: #059669; color: white; } .btn-green:hover { background: #047857; }
+  .btn-blue { background: #2563eb; color: white; } .btn-blue:hover { background: #1d4ed8; }
+  .btn-yellow { background: #d97706; color: white; } .btn-yellow:hover { background: #b45309; }
+  .btn-red { background: #dc2626; color: white; } .btn-red:hover { background: #b91c1c; }
+  .btn-purple { background: #7c3aed; color: white; } .btn-purple:hover { background: #6d28d9; }
+  .btn-gray { background: #475569; color: white; } .btn-gray:hover { background: #334155; }
+  input, select { width: 100%; padding: 8px 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #e2e8f0; font-size: 0.85rem; margin-bottom: 8px; }
+  label { font-size: 0.75rem; color: #64748b; display: block; margin-bottom: 3px; }
+  pre { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; padding: 12px; font-size: 0.75rem; overflow: auto; max-height: 320px; color: #10b981; white-space: pre-wrap; line-height: 1.5; }
+  .status { padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-bottom: 8px; }
+  .ok { background: #064e3b; color: #34d399; }
+  .err { background: #7f1d1d; color: #fca5a5; }
+  .info { background: #1e3a5f; color: #93c5fd; }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; }
+  .badge-emerald { background: #065f46; color: #6ee7b7; }
+  .badge-blue { background: #1e3a5f; color: #93c5fd; }
+  hr { border: none; border-top: 1px solid #334155; margin: 12px 0; }
+  #qr-img { max-width: 200px; display: block; margin: 8px auto; border-radius: 8px; }
+  .trans-id { font-family: monospace; font-size: 0.8rem; color: #fbbf24; }
+</style>
+</head>
+<body>
+
+<h1>🧪 Campus Karma Exchange — API Tester</h1>
+<p class="subtitle">Test luồng Transaction & Escrow/QR trực tiếp | Backend: http://localhost:5000</p>
+
+<div class="grid">
+  <!-- CỘT TRÁI: Setup & Items -->
+  <div>
+    <div class="card" style="margin-bottom:16px">
+      <h2>⚙️ Cấu hình</h2>
+      <label>API Base URL</label>
+      <input id="api-url" value="http://localhost:5000/api" />
+      <label>User ID (đang đăng nhập)</label>
+      <input id="my-user-id" type="number" placeholder="VD: 2 (PHAM DUY ANH - 400 Karma)" value="2" />
+      <label>JWT Token (paste từ cookie hoặc dùng endpoint /auth/me)</label>
+      <input id="jwt-token" type="text" placeholder="Dùng cookie tự động nếu đăng nhập" />
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h2>📋 Items & Categories</h2>
+      <button class="btn-gray" onclick="call('GET','/items','items-out')">🔍 GET /items (danh sách)</button>
+      <button class="btn-gray" onclick="call('GET','/categories','items-out')">📂 GET /categories</button>
+      <button class="btn-gray" onclick="call('GET','/items/4','items-out')">📦 GET /items/4 (Casio FX-570)</button>
+      <pre id="items-out">// Kết quả API hiện ra đây</pre>
+    </div>
+
+    <div class="card">
+      <h2>💳 Tạo giao dịch (Borrower)</h2>
+      <p style="font-size:0.75rem;color:#64748b;margin-bottom:10px">⚠️ Dùng user #2 (PHAM DUY ANH, 400 Karma) để mượn item #4 của user #1</p>
+      <label>Item ID cần mượn</label>
+      <input id="item-id" type="number" value="4" />
+      <label>Hạn trả (due_date)</label>
+      <input id="due-date" type="date" id="due-date" />
+      <button class="btn-green" onclick="createTransaction()">🔐 POST /transactions (khóa Escrow)</button>
+      <div id="trans-created" style="display:none">
+        <div class="status ok">✅ Giao dịch tạo thành công!</div>
+        <p style="font-size:0.8rem">Transaction ID: <span class="trans-id" id="created-trans-id">-</span></p>
+      </div>
+      <pre id="create-out">// Kết quả tạo giao dịch</pre>
+    </div>
+  </div>
+
+  <!-- CỘT PHẢI: QR & Actions -->
+  <div>
+    <div class="card" style="margin-bottom:16px">
+      <h2>📊 Giao dịch của tôi</h2>
+      <button class="btn-gray" onclick="call('GET','/transactions','my-trans-out')">📋 GET /transactions (tất cả)</button>
+      <button class="btn-gray" onclick="call('GET','/transactions?role=borrower','my-trans-out')">⬆️ Đang mượn</button>
+      <button class="btn-gray" onclick="call('GET','/transactions?role=lender','my-trans-out')">⬇️ Đang cho mượn</button>
+      <label>Transaction ID cụ thể</label>
+      <input id="trans-id-input" type="number" placeholder="VD: 1" />
+      <button class="btn-gray" onclick="callWithId('GET','/transactions/','trans-id-input','my-trans-out')">🔍 GET chi tiết giao dịch</button>
+      <pre id="my-trans-out">// Kết quả hiện ra đây</pre>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h2>📱 QR Code (Lender: user #1)</h2>
+      <p style="font-size:0.75rem;color:#64748b;margin-bottom:10px">⚠️ Endpoint này yêu cầu đang đăng nhập với tư cách LENDER (user #1)</p>
+      <label>Transaction ID để sinh QR</label>
+      <input id="qr-trans-id" type="number" placeholder="ID giao dịch vừa tạo" />
+      <button class="btn-yellow" onclick="generateQR()">⚡ GET /transactions/:id/qr</button>
+      <div id="qr-result" style="display:none">
+        <div class="status info">📱 QR Token nhận được:</div>
+        <canvas id="qr-canvas" style="display:block;margin:8px auto;border-radius:8px;"></canvas>
+        <p style="font-size:0.7rem;text-align:center;color:#94a3b8" id="qr-expire"></p>
+        <label style="margin-top:8px">Token (để test verify-qr)</label>
+        <input id="qr-token-display" readonly style="font-size:0.7rem;cursor:pointer" onclick="this.select()" />
+      </div>
+      <pre id="qr-out">// QR token hiện ra đây</pre>
+    </div>
+
+    <div class="card">
+      <h2>✅ Xác thực QR / Actions</h2>
+      <label>Transaction ID</label>
+      <input id="action-trans-id" type="number" placeholder="ID giao dịch" />
+      <label>QR Token (paste từ ô trên)</label>
+      <input id="qr-token-input" type="text" placeholder="Paste token QR" style="font-size:0.7rem" />
+      <button class="btn-blue" onclick="verifyQR()">📷 POST verify-qr (Borrower quét)</button>
+      <button class="btn-green" onclick="confirmReturn()">🔄 POST return (Lender xác nhận trả)</button>
+      <button class="btn-red" onclick="cancelTrans()">❌ POST cancel (Hủy giao dịch)</button>
+      <pre id="action-out">// Kết quả action hiện ra đây</pre>
+    </div>
+  </div>
+</div>
+
+<script>
+// Set default due_date = 7 ngày từ giờ
+document.getElementById('due-date').value = new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0];
+
+const API = () => document.getElementById('api-url').value;
+const TOKEN = () => document.getElementById('jwt-token').value;
+
+async function call(method, path, outputId, body) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (TOKEN()) headers['Authorization'] = `Bearer ${TOKEN()}`;
+
+  try {
+    const res = await fetch(API() + path, {
+      method,
+      headers,
+      credentials: 'include',
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await res.json();
+    const el = document.getElementById(outputId);
+    el.textContent = JSON.stringify(data, null, 2);
+    el.style.color = res.ok ? '#10b981' : '#f87171';
+    return { ok: res.ok, data };
+  } catch (e) {
+    document.getElementById(outputId).textContent = '❌ Error: ' + e.message;
+    document.getElementById(outputId).style.color = '#f87171';
+    return { ok: false, data: null };
+  }
+}
+
+async function callWithId(method, basePath, inputId, outputId, body) {
+  const id = document.getElementById(inputId).value;
+  if (!id) { alert('Nhập ID trước!'); return; }
+  return call(method, basePath + id, outputId, body);
+}
+
+async function createTransaction() {
+  const itemId = document.getElementById('item-id').value;
+  const dueDate = document.getElementById('due-date').value;
+  if (!itemId || !dueDate) { alert('Nhập Item ID và hạn trả!'); return; }
+
+  const res = await call('POST', '/transactions', 'create-out', {
+    item_id: parseInt(itemId),
+    due_date: dueDate,
+  });
+
+  if (res.ok && res.data?.data) {
+    const transId = res.data.data.trans_id;
+    document.getElementById('created-trans-id').textContent = transId;
+    document.getElementById('trans-created').style.display = 'block';
+    document.getElementById('qr-trans-id').value = transId;
+    document.getElementById('action-trans-id').value = transId;
+    document.getElementById('trans-id-input').value = transId;
+  }
+}
+
+async function generateQR() {
+  const id = document.getElementById('qr-trans-id').value;
+  if (!id) { alert('Nhập Transaction ID!'); return; }
+
+  const res = await call('GET', `/transactions/${id}/qr`, 'qr-out');
+  if (res.ok && res.data?.data?.token) {
+    const token = res.data.data.token;
+    const exp = res.data.data.expires_in;
+    document.getElementById('qr-token-display').value = token;
+    document.getElementById('qr-token-input').value = token;
+    document.getElementById('qr-expire').textContent = `Hết hạn sau: ${exp}s`;
+    document.getElementById('qr-result').style.display = 'block';
+
+    // Vẽ QR lên canvas
+    if (window.QRCode) {
+      QRCode.toCanvas(document.getElementById('qr-canvas'), token, {
+        width: 160, margin: 1, color: { dark: '#065f46', light: '#f0fdf4' }
+      });
+    } else {
+      document.getElementById('qr-canvas').style.display = 'none';
+      document.getElementById('qr-out').textContent += '\n\n⚠️ Cần load thư viện QRCode để render canvas';
+    }
+  }
+}
+
+async function verifyQR() {
+  const id = document.getElementById('action-trans-id').value;
+  const token = document.getElementById('qr-token-input').value;
+  if (!id || !token) { alert('Nhập Transaction ID và QR Token!'); return; }
+  await call('POST', `/transactions/${id}/verify-qr`, 'action-out', { qr_token: token });
+}
+
+async function confirmReturn() {
+  const id = document.getElementById('action-trans-id').value;
+  if (!id) { alert('Nhập Transaction ID!'); return; }
+  if (!confirm('Xác nhận người mượn đã trả đồ?')) return;
+  await call('POST', `/transactions/${id}/return`, 'action-out');
+}
+
+async function cancelTrans() {
+  const id = document.getElementById('action-trans-id').value;
+  if (!id) { alert('Nhập Transaction ID!'); return; }
+  if (!confirm('Hủy giao dịch?')) return;
+  await call('POST', `/transactions/${id}/cancel`, 'action-out');
+}
+</script>
+</body>
+</html>

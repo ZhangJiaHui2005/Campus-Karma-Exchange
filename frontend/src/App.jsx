@@ -8,6 +8,9 @@ import AdminDashboard from "./pages/admin/Admindashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Profile from "./pages/users/Profile";
 import BrowseItems from "./pages/items/BrowseItems";
+import ItemDetail from "./pages/items/ItemDetail";
+import MyTransactions from "./pages/transactions/MyTransactions";
+import TransactionDetail from "./pages/transactions/TransactionDetail";
 import PrivateRoute from "./routes/PrivateRoute";
 import AdminRoute from "./routes/AdminRoute";
 import Wallet from "./pages/wallet/Wallet";
@@ -87,11 +90,19 @@ function App() {
             />
             <Route
               path="/profile"
-              element={
-                <PrivateRoute>
-                  <Profile />
-                </PrivateRoute>
-              }
+              element={<PrivateRoute><Profile /></PrivateRoute>}
+            />
+            <Route
+              path="/items/:id"
+              element={<PrivateRoute><ItemDetail /></PrivateRoute>}
+            />
+            <Route
+              path="/transactions"
+              element={<PrivateRoute><MyTransactions /></PrivateRoute>}
+            />
+            <Route
+              path="/transactions/:id"
+              element={<PrivateRoute><TransactionDetail /></PrivateRoute>}
             />
           </Routes>
         </div>

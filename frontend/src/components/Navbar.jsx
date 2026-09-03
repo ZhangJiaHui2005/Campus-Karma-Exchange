@@ -107,11 +107,13 @@ export function NavigationBar() {
                   Profile
                 </DropdownItem>
                 <DropdownItem as={Link} to="/browse">
-                  Browse Items
+                  Khám phá đồ
                 </DropdownItem>
-                <DropdownItem>Transactions</DropdownItem>
+                <DropdownItem as={Link} to="/transactions">
+                  Giao dịch của tôi
+                </DropdownItem>
                 <DropdownDivider />
-                <DropdownItem onClick={handleLogout}>Sign out</DropdownItem>
+                <DropdownItem onClick={handleLogout}>Đăng xuất</DropdownItem>
               </Dropdown>
             ) : (
               <NavbarLink
