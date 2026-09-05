@@ -23,12 +23,59 @@ export const fetchItems = async (filters = {}) => {
   return readResponse(response);
 };
 
+export const fetchItemById = async (itemId) => {
+  const response = await fetch(`${API_URL}/items/${itemId}`, {
+    credentials: "include",
+  });
+  return readResponse(response);
+};
+
 export const createItem = async (payload) => {
   const response = await fetch(`${API_URL}/items`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify(payload),
+  });
+  return readResponse(response);
+};
+
+export const fetchMyItems = async (status = "") => {
+  const params = new URLSearchParams();
+  if (status) params.set("status", status);
+
+  const response = await fetch(`${API_URL}/items/mine?${params.toString()}`, {
+    credentials: "include",
+  });
+  return readResponse(response);
+};
+
+export const uploadItemImage = async (file) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await fetch(`${API_URL}/items/upload`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
+  return readResponse(response);
+};
+
+export const updateItem = async (itemId, payload) => {
+  const response = await fetch(`${API_URL}/items/${itemId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+  return readResponse(response);
+};
+
+export const deleteItem = async (itemId) => {
+  const response = await fetch(`${API_URL}/items/${itemId}`, {
+    method: "DELETE",
+    credentials: "include",
   });
   return readResponse(response);
 };

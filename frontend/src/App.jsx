@@ -8,6 +8,8 @@ import AdminDashboard from "./pages/admin/Admindashboard";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Profile from "./pages/users/Profile";
 import BrowseItems from "./pages/items/BrowseItems";
+import ItemDetail from "./pages/items/ItemDetail";
+import MyItems from "./pages/items/MyItems";
 import PrivateRoute from "./routes/PrivateRoute";
 import AdminRoute from "./routes/AdminRoute";
 import Wallet from "./pages/wallet/Wallet";
@@ -42,6 +44,22 @@ function App() {
               element={
                 <PrivateRoute>
                   <BrowseItems />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/items/:id"
+              element={
+                <PrivateRoute>
+                  <ItemDetail />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-items"
+              element={
+                <PrivateRoute>
+                  <MyItems />
                 </PrivateRoute>
               }
             />
