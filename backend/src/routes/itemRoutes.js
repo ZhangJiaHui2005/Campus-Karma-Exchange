@@ -1,31 +1,30 @@
-import express from 'express';
+import express from "express";
+import multer from "multer";
 import {
   createItem,
   deleteItem,
   getItemById,
   getItems,
   getMyItems,
-  uploadItemImage,
   updateItem,
-} from '../controllers/itemController.js';
-import authMiddleware from '../middlewares/authMiddleware.js';
-import { itemImageUpload } from '../middlewares/itemImageUpload.js';
+} from "../controllers/itemController.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, callback) => {
+    callback(null, file.mimetype.startsWith("image/"));
+  },
+});
 
-router.get('/', getItems);
-router.get('/mine', authMiddleware, getMyItems);
-router.get('/:id', getItemById);
-router.post('/upload', authMiddleware, (req, res, next) => {
-  itemImageUpload.single('image')(req, res, (error) => {
-    if (error) {
-      return res.status(400).json({ success: false, message: error.message });
-    }
-    return next();
-  });
-}, uploadItemImage);
-router.post('/', authMiddleware, createItem);
-router.patch('/:id', authMiddleware, updateItem);
-router.delete('/:id', authMiddleware, deleteItem);
+router.get("/", getItems);
+router.get("/my", authMiddleware, getMyItems); // Phải trước /:id để không bị match nhầm
+router.get("/mine", authMiddleware, getMyItems); // Tương thích trang My Items của Person 2
+router.get("/:id", getItemById);
+router.post("/", authMiddleware, upload.single("image"), createItem);
+router.patch("/:id", authMiddleware, updateItem);
+router.delete("/:id", authMiddleware, deleteItem);
 
 export default router;

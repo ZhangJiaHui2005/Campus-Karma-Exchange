@@ -1,6 +1,7 @@
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import prisma from "../utils/prisma.js";
+import { syncUserLevel } from "../services/levelService.js";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -53,8 +54,8 @@ export const googleLogin = async (req, res) => {
       await prisma.adminNotification.create({
         data: {
           type: "USER_REGISTERED",
-          title: "Người dùng mới đăng ký",
-          message: `${user.full_name} (${user.email}) vừa tạo tài khoản.`,
+          title: "Yêu cầu duyệt trở thành người dùng",
+          message: `${user.full_name} (${user.email}) vừa gửi yêu cầu tham gia hệ thống.`,
           user_id: user.user_id,
         },
       });
@@ -99,10 +100,15 @@ export const googleLogin = async (req, res) => {
 // Trả về thông tin user hiện tại từ HttpOnly Cookie (dùng cho middleware frontend)
 export const me = async (req, res) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { user_id: req.user.user_id },
-      include: { level: true },
-    });
+    // Tự động kiểm tra và đồng bộ level theo karma nếu có chênh lệch
+    let user = await syncUserLevel(req.user.user_id);
+
+    if (!user) {
+      user = await prisma.user.findUnique({
+        where: { user_id: req.user.user_id },
+        include: { level: true },
+      });
+    }
 
     if (!user) {
       return res

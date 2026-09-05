@@ -14,7 +14,7 @@ import {
 import { Plus, RotateCcw, Search, SlidersHorizontal, X } from "lucide-react";
 import ItemCard from "../../components/items/ItemCard";
 import UserLayout from "../../layouts/UserLayout";
-import { createItem, fetchCategories, fetchItems, uploadItemImage } from "../../services/itemService";
+import { createItem, fetchCategories, fetchItems } from "../../services/itemService";
 
 const emptyForm = {
   title: "",
@@ -154,19 +154,13 @@ export default function BrowseItems() {
     setSubmitting(true);
     setError("");
     try {
-      let imageUrl = "";
-      if (imageFile) {
-        const uploadResult = await uploadItemImage(imageFile);
-        imageUrl = uploadResult.image_url;
-      }
-
-      await createItem({ ...form, image_url: imageUrl });
+      await createItem({ ...form, image_file: imageFile });
       setForm(emptyForm);
       setImageFile(null);
       if (imagePreview) URL.revokeObjectURL(imagePreview);
       setImagePreview("");
       setShowCreate(false);
-      setNotice("Đăng vật phẩm thành công.");
+      setNotice("Đăng vật phẩm thành công. Bài đăng đang chờ admin duyệt.");
       setSearchParams(createFilterParams({ ...appliedFilters, page: 1 }));
       setReloadKey((value) => value + 1);
     } catch (err) {

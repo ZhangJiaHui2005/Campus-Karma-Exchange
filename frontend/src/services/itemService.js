@@ -7,14 +7,17 @@ const readResponse = async (response) => {
 };
 
 export const fetchCategories = async () => {
-  const response = await fetch(`${API_URL}/categories`, { credentials: "include" });
+  const response = await fetch(`${API_URL}/categories`, {
+    credentials: "include",
+  });
   return readResponse(response);
 };
 
 export const fetchItems = async (filters = {}) => {
   const params = new URLSearchParams();
   Object.entries(filters).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") params.set(key, value);
+    if (value !== undefined && value !== null && value !== "")
+      params.set(key, value);
   });
 
   const response = await fetch(`${API_URL}/items?${params.toString()}`, {
@@ -31,11 +34,17 @@ export const fetchItemById = async (itemId) => {
 };
 
 export const createItem = async (payload) => {
+  const body = new FormData();
+  Object.entries(payload).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      body.append(key === "image_file" ? "image" : key, value);
+    }
+  });
+
   const response = await fetch(`${API_URL}/items`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify(payload),
+    body,
   });
   return readResponse(response);
 };

@@ -1,4 +1,5 @@
 import prisma from "../utils/prisma.js";
+import { uploadImage } from "../services/cloudinaryService.js";
 
 const itemInclude = {
   category: true,
@@ -10,7 +11,6 @@ const itemInclude = {
     },
   },
 };
-
 const parsePositiveInt = (value, fallback) => {
   const number = Number.parseInt(value, 10);
   return Number.isInteger(number) && number > 0 ? number : fallback;
@@ -175,6 +175,10 @@ export const createItem = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Danh muc khong ton tai" });
 
+    const imageUrl = req.file
+      ? await uploadImage(req.file.buffer, "campus-karma/items")
+      : image_url?.trim() || null;
+
     const item = await prisma.item.create({
       data: {
         owner_id: req.user.user_id,
@@ -184,10 +188,19 @@ export const createItem = async (req, res) => {
         karma_value: parsedKarma,
         type: type.trim().toUpperCase(),
         location: location?.trim() || null,
-        image_url: image_url?.trim() || null,
+        image_url: imageUrl,
         status: "PENDING",
       },
       include: itemInclude,
+    });
+
+    await prisma.adminNotification.create({
+      data: {
+        type: "ITEM_PENDING",
+        title: "Yêu cầu duyệt bài đăng",
+        message: `${item.owner.full_name} vừa gửi bài đăng “${item.title}” để duyệt.`,
+        user_id: req.user.user_id,
+      },
     });
 
     return res
@@ -244,11 +257,23 @@ export const updateItem = async (req, res) => {
         .json({ success: false, message: "Gia tri Karma khong hop le" });
     }
 
+    if (Object.keys(data).length > 0) data.status = "PENDING";
+
     const item = await prisma.item.update({
       where: { item_id: itemId },
       data,
       include: itemInclude,
     });
+    if (Object.keys(data).length > 0) {
+      await prisma.adminNotification.create({
+        data: {
+          type: "ITEM_PENDING",
+          title: "Yêu cầu duyệt lại bài đăng",
+          message: `${item.owner.full_name} đã cập nhật bài đăng “${item.title}”, cần admin duyệt lại.`,
+          user_id: req.user.user_id,
+        },
+      });
+    }
     return res.json({
       success: true,
       message: "Cap nhat vat pham thanh cong",

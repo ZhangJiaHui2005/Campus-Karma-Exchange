@@ -38,10 +38,13 @@ model User {
   last_active_at DateTime?
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
-  items          Item[]
-  borrow_requests BorrowRequest[] @relation("BorrowerRequests")
-  payments       Payments[]
-  memberships    Memberships[]
+  items                Item[]
+  borrow_requests      BorrowRequest[]  @relation("BorrowerRequests")
+  payments             Payments[]
+  memberships          Memberships[]
+  lenderTransactions   Transaction[]    @relation("LenderTransactions")
+  borrowerTransactions Transaction[]    @relation("BorrowerTransactions")
+  escrowLogs           EscrowLog[]
 }
 
 model Category {
@@ -70,6 +73,7 @@ model Item {
   owner       User     @relation(fields: [owner_id], references: [user_id], onDelete: Cascade)
   category    Category @relation(fields: [category_id], references: [category_id], onDelete: Restrict)
   borrow_requests BorrowRequest[] @relation("ItemBorrowRequests")
+  transactions    Transaction[]
 
   @@index([owner_id])
   @@index([category_id])
@@ -112,9 +116,48 @@ model BorrowRequest {
   @@index([created_at])
 }
 
+// ─────────────────────────────────────────────
+// MODULE 3: TRANSACTION & ESCROW/QR (Person 3)
+// ─────────────────────────────────────────────
+
 model Transaction {
-  trans_id              String                @id @default(uuid()) @db.Uuid
-  insurance_fund_logs   Insurance_Fund_Logs[]
+  trans_id       Int      @id @default(autoincrement())
+  item_id        Int
+  lender_id      Int
+  borrower_id    Int
+  karma_amount   Int
+  deposit_amount Int      @default(0)
+  qr_code_hash   String?
+  // PENDING → ESCROW_LOCKED → QR_VERIFIED → COMPLETED
+  // PENDING → CANCELLED | QR_VERIFIED → DISPUTED
+  status         String   @default("PENDING")
+  due_date       DateTime
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  item       Item        @relation(fields: [item_id], references: [item_id])
+  lender     User        @relation("LenderTransactions", fields: [lender_id], references: [user_id])
+  borrower   User        @relation("BorrowerTransactions", fields: [borrower_id], references: [user_id])
+  escrowLogs EscrowLog[]
+
+  @@index([lender_id])
+  @@index([borrower_id])
+  @@index([status])
+  @@index([item_id])
+}
+
+model EscrowLog {
+  escrow_id    Int      @id @default(autoincrement())
+  trans_id     Int
+  user_id      Int
+  locked_karma Int
+  // LOCKED / RELEASED / REFUNDED
+  status       String   @default("LOCKED")
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  transaction Transaction @relation(fields: [trans_id], references: [trans_id])
+  user        User        @relation(fields: [user_id], references: [user_id])
 }
 
 model Payments {
@@ -128,8 +171,11 @@ model Payments {
   status          PaymentStatus
   created_at      DateTime       @default(now())
   paid_at         DateTime?
+  archived_at     DateTime?
   user            User           @relation(fields: [user_id], references: [user_id])
   membership      Memberships?
+
+  @@index([archived_at])
 }
 
 model Memberships {
@@ -149,12 +195,11 @@ model Memberships {
 }
 
 model Insurance_Fund_Logs {
-  log_id       String      @id @default(uuid()) @db.Uuid
-  trans_id     String      @db.Uuid
+  log_id       String   @id @default(uuid()) @db.Uuid
+  trans_id     Int
   amount_karma Int
   rate_pct     Decimal
-  created_at   DateTime    @default(now())
-  transaction  Transaction @relation(fields: [trans_id], references: [trans_id])
+  created_at   DateTime @default(now())
 }
 
 enum PaymentPurpose {

@@ -17,6 +17,8 @@ import {
   deleteAdminBorrowRequest,
   deleteAdminUser,
   getAdminNotifications,
+  deleteAdminNotification,
+  getAdminPayments,
   getAdminSystemReport,
   getAdminPendingApprovals,
 } from "../controllers/adminController.js";
@@ -35,6 +37,8 @@ router.patch("/users/:id/ban", adminMiddleware, updateUserBanStatus);
 router.patch("/users/:id/approve", adminMiddleware, approveAdminUser);
 router.delete("/users/:id", adminMiddleware, deleteAdminUser);
 router.get("/notifications", adminMiddleware, getAdminNotifications);
+router.delete("/notifications/:id", adminMiddleware, deleteAdminNotification);
+router.get("/payments", adminMiddleware, getAdminPayments);
 router.get("/system-report", adminMiddleware, getAdminSystemReport);
 router.get("/items", adminMiddleware, getAdminItems);
 router.patch("/items/:id/approve", adminMiddleware, approveAdminItem);

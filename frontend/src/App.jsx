@@ -10,6 +10,8 @@ import Profile from "./pages/users/Profile";
 import BrowseItems from "./pages/items/BrowseItems";
 import ItemDetail from "./pages/items/ItemDetail";
 import MyItems from "./pages/items/MyItems";
+import MyTransactions from "./pages/transactions/MyTransactions";
+import TransactionDetail from "./pages/transactions/TransactionDetail";
 import PrivateRoute from "./routes/PrivateRoute";
 import AdminRoute from "./routes/AdminRoute";
 import Wallet from "./pages/wallet/Wallet";
@@ -35,31 +37,43 @@ function App() {
               }
             />
             <Route path="/about" element={<About />} />
-            <Route path="/wallet" element={<PrivateRoute><Wallet /></PrivateRoute>} />
-            <Route path="/wallet/topup" element={<PrivateRoute><TopUp /></PrivateRoute>} />
-            <Route path="/wallet/topup/result" element={<PrivateRoute><TopUpResult /></PrivateRoute>} />
-            <Route path="/membership" element={<PrivateRoute><KarmaPass /></PrivateRoute>} />
+            <Route
+              path="/wallet"
+              element={
+                <PrivateRoute>
+                  <Wallet />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/wallet/topup"
+              element={
+                <PrivateRoute>
+                  <TopUp />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/wallet/topup/result"
+              element={
+                <PrivateRoute>
+                  <TopUpResult />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/membership"
+              element={
+                <PrivateRoute>
+                  <KarmaPass />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/browse"
               element={
                 <PrivateRoute>
                   <BrowseItems />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/items/:id"
-              element={
-                <PrivateRoute>
-                  <ItemDetail />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/my-items"
-              element={
-                <PrivateRoute>
-                  <MyItems />
                 </PrivateRoute>
               }
             />
@@ -104,10 +118,58 @@ function App() {
               }
             />
             <Route
+              path="/admin/payments"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
+            <Route
+              path="/admin/payment-archive"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
+            <Route
               path="/profile"
               element={
                 <PrivateRoute>
                   <Profile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/items/:id"
+              element={
+                <PrivateRoute>
+                  <ItemDetail />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-items"
+              element={
+                <PrivateRoute>
+                  <MyItems />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/transactions"
+              element={
+                <PrivateRoute>
+                  <MyTransactions />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/transactions/:id"
+              element={
+                <PrivateRoute>
+                  <TransactionDetail />
                 </PrivateRoute>
               }
             />
