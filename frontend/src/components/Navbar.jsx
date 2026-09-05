@@ -12,7 +12,6 @@ import {
   NavbarToggle,
 } from "flowbite-react";
 import { Link } from "react-router-dom";
-import { Recycle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -111,6 +110,9 @@ export function NavigationBar() {
                 </DropdownItem>
                 <DropdownItem as={Link} to="/browse">
                   Khám phá đồ
+                </DropdownItem>
+                <DropdownItem as={Link} to="/my-items">
+                  Vật phẩm của tôi
                 </DropdownItem>
                 <DropdownItem as={Link} to="/transactions">
                   Giao dịch của tôi

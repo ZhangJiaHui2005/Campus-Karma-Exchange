@@ -19,8 +19,8 @@ import { createTransaction } from "../../services/transactionService";
 
 const API = import.meta.env.VITE_API_URL;
 
-const TYPE_LABEL = { GIVE: "Tặng", LEND: "Cho mượn", BORROW: "Cho mượn", EXCHANGE: "Trao đổi" };
-const TYPE_COLOR = { GIVE: "success", LEND: "info", BORROW: "info", EXCHANGE: "warning" };
+const TYPE_LABEL = { GIVE: "Tặng", LEND: "Cho mượn", BORROW: "Cho mượn", SELL: "Bán", EXCHANGE: "Bán" };
+const TYPE_COLOR = { GIVE: "success", LEND: "info", BORROW: "info", SELL: "warning", EXCHANGE: "warning" };
 
 export default function ItemDetail() {
   const { id } = useParams();
@@ -78,7 +78,6 @@ export default function ItemDetail() {
     : 0;
   const totalKarma = item ? item.karma_value + estimatedDeposit : 0;
   const isOwner = user?.user_id === item?.owner_id;
-  const canBorrow = item?.status === "AVAILABLE" && !isOwner;
 
   if (loading) return (
     <UserLayout>

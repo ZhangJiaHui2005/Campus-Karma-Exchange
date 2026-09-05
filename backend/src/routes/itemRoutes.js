@@ -21,6 +21,7 @@ const upload = multer({
 
 router.get("/", getItems);
 router.get("/my", authMiddleware, getMyItems); // Phải trước /:id để không bị match nhầm
+router.get("/mine", authMiddleware, getMyItems); // Tương thích trang My Items của Person 2
 router.get("/:id", getItemById);
 router.post("/", authMiddleware, upload.single("image"), createItem);
 router.patch("/:id", authMiddleware, updateItem);
