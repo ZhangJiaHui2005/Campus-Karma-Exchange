@@ -15,17 +15,26 @@ async function main() {
   //     { level_id: 3, level_name: 'Đại sứ Xanh', min_karma: 1001, max_karma: 999999, borrow_limit: 10, deposit_discount_pct: 50 },
   //   ],
   // });
-  await prisma.category.createMany({
-    skipDuplicates: true,
-    data: [
-      { name: 'Sach va tai lieu', icon: 'book-open' },
-      { name: 'Do dien tu', icon: 'laptop' },
-      { name: 'Quan ao', icon: 'shirt' },
-      { name: 'Do gia dung', icon: 'package' },
-      { name: 'The thao', icon: 'dumbbell' },
-      { name: 'Khac', icon: 'circle-ellipsis' },
-    ],
-  });
+  const categories = [
+    { name: 'Giáo trình & Sách', icon: 'book-open' },
+    { name: 'Đồ điện tử', icon: 'laptop' },
+    { name: 'Đồ gia dụng KTX', icon: 'house' },
+    { name: 'Dụng cụ thể thao', icon: 'dumbbell' },
+    { name: 'Dụng cụ học tập', icon: 'pencil' },
+    { name: 'Quần áo & Phụ kiện', icon: 'shirt' },
+    { name: 'Nhạc cụ', icon: 'music' },
+    { name: 'Khác', icon: 'circle-ellipsis' },
+  ];
+
+  for (const category of categories) {
+    await prisma.category.upsert({
+      where: { name: category.name },
+      update: { icon: category.icon },
+      create: category,
+    });
+  }
+
+  console.log('Seed dữ liệu CATEGORIES thành công!');
 }
 
 main().catch(console.error).finally(() => prisma.$disconnect());

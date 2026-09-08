@@ -11,10 +11,41 @@ const itemInclude = {
     },
   },
 };
-
 const parsePositiveInt = (value, fallback) => {
   const number = Number.parseInt(value, 10);
   return Number.isInteger(number) && number > 0 ? number : fallback;
+};
+
+export const uploadItemImage = (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: "Vui long chon anh" });
+  }
+
+  const image_url = `${req.protocol}://${req.get("host")}/uploads/items/${req.file.filename}`;
+  return res.status(201).json({ success: true, image_url });
+};
+
+export const getMyItems = async (req, res) => {
+  try {
+    const status = req.query.status?.trim().toUpperCase();
+    const where = {
+      owner_id: req.user.user_id,
+      ...(status ? { status } : {}),
+    };
+
+    const items = await prisma.item.findMany({
+      where,
+      include: itemInclude,
+      orderBy: { created_at: "desc" },
+    });
+
+    return res.json({ success: true, items });
+  } catch (error) {
+    console.error("Get my items error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Khong the tai vat pham cua ban" });
+  }
 };
 
 export const getItems = async (req, res) => {
@@ -42,7 +73,7 @@ export const getItems = async (req, res) => {
       ];
     }
     if (category_id) where.category_id = Number(category_id);
-    if (type) where.type = type;
+    if (type) where.type = type === "SELL" ? { in: ["SELL", "EXCHANGE"] } : type;
     if (status) where.status = status;
     where.status = status || "AVAILABLE";
     if (location)
@@ -280,22 +311,5 @@ export const deleteItem = async (req, res) => {
     return res
       .status(500)
       .json({ success: false, message: "Khong the xoa vat pham" });
-  }
-};
-
-// GET /api/items/my — Vật phẩm của chính mình
-export const getMyItems = async (req, res) => {
-  try {
-    const items = await prisma.item.findMany({
-      where: { owner_id: req.user.user_id },
-      include: itemInclude,
-      orderBy: { created_at: "desc" },
-    });
-    return res.json({ success: true, items });
-  } catch (error) {
-    console.error("Get my items error:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Khong the tai vat pham" });
   }
 };

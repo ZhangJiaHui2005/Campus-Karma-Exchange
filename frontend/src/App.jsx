@@ -9,6 +9,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import Profile from "./pages/users/Profile";
 import BrowseItems from "./pages/items/BrowseItems";
 import ItemDetail from "./pages/items/ItemDetail";
+import MyItems from "./pages/items/MyItems";
 import MyTransactions from "./pages/transactions/MyTransactions";
 import TransactionDetail from "./pages/transactions/TransactionDetail";
 import PrivateRoute from "./routes/PrivateRoute";
@@ -145,6 +146,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <ItemDetail />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/my-items"
+              element={
+                <PrivateRoute>
+                  <MyItems />
                 </PrivateRoute>
               }
             />
