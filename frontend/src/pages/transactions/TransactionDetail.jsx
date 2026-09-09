@@ -9,6 +9,7 @@ import { useAuth } from "../../context/AuthContext";
 import UserLayout from "../../layouts/UserLayout";
 import QRDisplay from "./QRDisplay";
 import QRScanner from "./QRScanner";
+import { Alert, Button, Spinner } from "flowbite-react";
 import {
   ArrowLeft,
   Zap,
@@ -23,6 +24,7 @@ import {
   AlertTriangle,
   RefreshCw,
   ShieldCheck,
+  MapPin,
 } from "lucide-react";
 
 const STATUS_CONFIG = {
@@ -96,7 +98,7 @@ export default function TransactionDetail() {
     return (
       <UserLayout>
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+          <Spinner size="xl" />
         </div>
       </UserLayout>
     );
@@ -105,9 +107,7 @@ export default function TransactionDetail() {
   if (error || !tx) {
     return (
       <UserLayout>
-        <div className="max-w-2xl mx-auto mt-10 text-center text-red-500">
-          {error || "Không tìm thấy giao dịch"}
-        </div>
+        <Alert color="failure" className="mx-auto mt-10 max-w-2xl">{error || "Không tìm thấy giao dịch"}</Alert>
       </UserLayout>
     );
   }
@@ -127,18 +127,20 @@ export default function TransactionDetail() {
 
   return (
     <UserLayout>
-      <div className="max-w-3xl mx-auto space-y-5">
+      <div className="mx-auto max-w-4xl space-y-6 pb-10">
         {/* Back + Title */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 border-b border-slate-200 pb-6 dark:border-slate-800">
           <button
             onClick={() => navigate("/transactions")}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            aria-label="Quay lại danh sách giao dịch"
+            className="rounded-xl border border-slate-200 p-2.5 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300/40 dark:border-slate-800 dark:hover:bg-slate-800"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-              Chi tiết giao dịch #{tx.trans_id}
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-amber-700 dark:text-amber-400">Mã giao dịch #{tx.trans_id}</p>
+            <h1 className="font-display text-3xl font-semibold text-slate-950 dark:text-white">
+              Chi tiết giao dịch
             </h1>
             <p className="text-sm text-gray-500">
               Tạo lúc {formatDate(tx.created_at)}
@@ -173,7 +175,7 @@ export default function TransactionDetail() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Thông tin đồ vật */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 space-y-4">
+          <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <Package className="w-4 h-4 text-emerald-500" /> Đồ vật
             </h2>
@@ -192,13 +194,13 @@ export default function TransactionDetail() {
                 {tx.item?.category?.name} · {tx.item?.type === "GIVE" ? "Tặng" : "Cho mượn"}
               </p>
               {tx.item?.location && (
-                <p className="text-xs text-gray-500 mt-1">📍 {tx.item.location}</p>
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-slate-500"><MapPin className="h-3.5 w-3.5" /> {tx.item.location}</p>
               )}
             </div>
           </div>
 
           {/* Thông tin Karma */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 space-y-4">
+          <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <Zap className="w-4 h-4 text-yellow-500" /> Phân phối Karma
             </h2>
@@ -206,21 +208,21 @@ export default function TransactionDetail() {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Phí mượn:</span>
                 <span className="font-bold text-gray-900 dark:text-white">
-                  {tx.karma_amount} ⚡
+                  {tx.karma_amount} Karma
                 </span>
               </div>
               {tx.deposit_amount > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500">Tiền cọc (hoàn khi trả đồ):</span>
                   <span className="font-bold text-gray-900 dark:text-white">
-                    {tx.deposit_amount} ⚡
+                    {tx.deposit_amount} Karma
                   </span>
                 </div>
               )}
               <div className="border-t border-gray-100 dark:border-gray-700 pt-2 flex justify-between text-sm font-bold">
                 <span>Tổng tạm khóa:</span>
                 <span className="text-emerald-600 dark:text-emerald-400">
-                  {totalKarma} ⚡
+                  {totalKarma} Karma
                 </span>
               </div>
             </div>
@@ -238,11 +240,11 @@ export default function TransactionDetail() {
         </div>
 
         {/* Hai bên tham gia */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
             <User className="w-4 h-4 text-emerald-500" /> Các bên tham gia
           </h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {[
               { label: "Người cho mượn", user: tx.lender, isMe: isLender },
               { label: "Người mượn", user: tx.borrower, isMe: isBorrower },
@@ -280,7 +282,7 @@ export default function TransactionDetail() {
 
         {/* Panel QR Code & Scanner */}
         {tx.status === "ESCROW_LOCKED" && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <h2 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <QrCode className="w-5 h-5 text-emerald-500" /> Xác thực giao nhận
             </h2>
@@ -329,33 +331,33 @@ export default function TransactionDetail() {
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3">
           {tx.status === "QR_VERIFIED" && isLender && (
-            <button
+            <Button
               onClick={handleReturn}
               disabled={actionLoading}
-              className="flex-1 flex items-center justify-center gap-2 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold transition-all disabled:opacity-50"
+              className="flex-1"
             >
               <CheckCircle2 className="w-5 h-5" />
               {actionLoading ? "Đang xử lý..." : "Xác nhận đã nhận lại đồ (Hoàn cọc)"}
-            </button>
+            </Button>
           )}
 
           {["PENDING", "ESCROW_LOCKED"].includes(tx.status) && (
-            <button
+            <Button
+              color="light"
               onClick={handleCancel}
               disabled={actionLoading}
-              className="flex items-center gap-2 px-5 py-3 bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-600 rounded-xl font-semibold border border-gray-200 transition-all disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-red-900/30"
             >
               <XCircle className="w-4 h-4" />
               Hủy giao dịch (Hoàn Karma)
-            </button>
+            </Button>
           )}
 
-          <button
+          <Button
+            color="light"
             onClick={loadTx}
-            className="flex items-center gap-2 px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-semibold border border-gray-200 transition-all dark:bg-gray-700 dark:hover:bg-gray-600"
           >
             <RefreshCw className="w-4 h-4" /> Làm mới
-          </button>
+          </Button>
         </div>
       </div>
     </UserLayout>

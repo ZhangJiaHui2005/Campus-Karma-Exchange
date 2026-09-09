@@ -72,7 +72,7 @@ export default function BrowseItems() {
   const loading = itemsState.requestKey !== requestKey;
   const { items, pagination, error: itemsError } = itemsState;
   const [error, setError] = useState("");
-  const [showCreate, setShowCreate] = useState(false);
+  const [showCreate, setShowCreate] = useState(searchParams.get("create") === "1");
   const [form, setForm] = useState(emptyForm);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
@@ -173,19 +173,19 @@ export default function BrowseItems() {
   return (
     <UserLayout>
       <section className="pb-12">
-        <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div className="mb-8 flex flex-col justify-between gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end dark:border-slate-800">
           <div>
-            <p className="mb-1 text-sm font-semibold uppercase tracking-wider text-emerald-600">
-              Campus Karma Exchange
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
+              Thư viện cộng đồng
             </p>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Khám phá vật phẩm</h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <h1 className="font-display text-4xl font-semibold text-slate-950 dark:text-white sm:text-5xl">Khám phá vật phẩm</h1>
+            <p className="mt-2 max-w-2xl text-slate-500 dark:text-slate-400">
               Tìm, lọc và trao đổi đồ dùng với sinh viên trong trường.
             </p>
           </div>
-          <Button color="success" onClick={() => setShowCreate((value) => !value)}>
-            {showCreate ? <X className="mr-2 h-5 w-5 dark:text-white" /> : <Plus className="mr-2 h-5 w-5 dark:text-white" />}
-            <span className="dark:text-white">{showCreate ? "Đóng" : "Đăng vật phẩm"}</span>
+          <Button onClick={() => setShowCreate((value) => !value)}>
+            {showCreate ? <X className="mr-2 h-5 w-5" /> : <Plus className="mr-2 h-5 w-5" />}
+            {showCreate ? "Đóng biểu mẫu" : "Đăng vật phẩm"}
           </Button>
         </div>
 
@@ -193,17 +193,19 @@ export default function BrowseItems() {
         {error && <Alert color="failure" className="mb-5" onDismiss={() => setError("")}>{error}</Alert>}
 
         {showCreate && (
-          <Card className="mb-7 border-emerald-200 dark:border-emerald-900">
+          <Card id="new-item" className="mb-7 border-amber-200 bg-amber-50/40 dark:border-amber-900/50 dark:bg-amber-950/10">
             <form onSubmit={handleCreate} className="grid gap-4 md:grid-cols-2">
               <div className="md:col-span-2">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Đăng vật phẩm mới</h2>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">Bài đăng mới</p>
+                <h2 className="mt-1 font-display text-2xl font-semibold text-slate-950 dark:text-white">Chia sẻ một vật phẩm</h2>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Điền thông tin rõ ràng để người nhận dễ tìm thấy và liên hệ với bạn.</p>
               </div>
               <div>
-                <Label htmlFor="title">Tên vật phẩm</Label>
+                <Label htmlFor="title">Tên vật phẩm <span aria-hidden="true" className="text-red-600">*</span></Label>
                 <TextInput id="title" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
               </div>
               <div>
-                <Label htmlFor="category">Danh mục</Label>
+                <Label htmlFor="category">Danh mục <span aria-hidden="true" className="text-red-600">*</span></Label>
                 <Select id="category" required value={form.category_id} onChange={(e) => setForm({ ...form, category_id: e.target.value })}>
                   <option value="">Chọn danh mục</option>
                   {categories.map((category) => <option key={category.category_id} value={category.category_id}>{category.name}</option>)}
@@ -218,7 +220,7 @@ export default function BrowseItems() {
                 </Select>
               </div>
               <div>
-                <Label htmlFor="karma">Giá trị Karma</Label>
+                <Label htmlFor="karma">Giá trị Karma <span aria-hidden="true" className="text-red-600">*</span></Label>
                 <TextInput id="karma" type="number" min="0" required value={form.karma_value} onChange={(e) => setForm({ ...form, karma_value: e.target.value })} />
               </div>
               <div>
@@ -251,7 +253,7 @@ export default function BrowseItems() {
                 <Textarea id="description" rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
               </div>
               <div className="md:col-span-2 flex justify-end">
-                <Button type="submit" color="success" disabled={submitting}>
+                <Button type="submit" disabled={submitting}>
                   {submitting && <Spinner size="sm" className="mr-2" />}
                   Đăng vật phẩm
                 </Button>
@@ -260,7 +262,7 @@ export default function BrowseItems() {
           </Card>
         )}
 
-        <Card className="mb-7">
+        <Card className="mb-7 bg-white/90 dark:bg-slate-900/90">
           <form key={queryKey} onSubmit={handleSearch} className="grid gap-4 lg:grid-cols-4">
             <div className="lg:col-span-2">
               <Label htmlFor="search">Từ khóa</Label>
@@ -299,7 +301,7 @@ export default function BrowseItems() {
             </div>
             <div className="flex gap-2 lg:col-span-4 lg:justify-end">
               <Button color="light" type="button" onClick={clearFilters}><X className="mr-2 h-4 w-4" />Xóa lọc</Button>
-              <Button color="success" type="submit" className="dark:text-white"><SlidersHorizontal className="mr-2 h-4 w-4" />Áp dụng</Button>
+              <Button type="submit"><SlidersHorizontal className="mr-2 h-4 w-4" />Áp dụng</Button>
             </div>
           </form>
         </Card>
@@ -312,8 +314,8 @@ export default function BrowseItems() {
               aria-pressed={!appliedFilters.category_id}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                 !appliedFilters.category_id
-                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900"
-                  : "bg-gray-100 text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                  ? "bg-slate-900 text-white shadow-sm dark:bg-amber-400 dark:text-slate-950"
+                  : "bg-white text-slate-600 ring-1 ring-slate-200 hover:text-slate-950 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-800"
               }`}
             >
               Tất cả
@@ -326,8 +328,8 @@ export default function BrowseItems() {
                 aria-pressed={appliedFilters.category_id === String(category.category_id)}
                 className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                   appliedFilters.category_id === String(category.category_id)
-                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900"
-                    : "bg-gray-100 text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                    ? "bg-slate-900 text-white shadow-sm dark:bg-amber-400 dark:text-slate-950"
+                    : "bg-white text-slate-600 ring-1 ring-slate-200 hover:text-slate-950 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-800"
                 }`}
               >
                 {category.name}
@@ -344,7 +346,7 @@ export default function BrowseItems() {
 
         {loading ? (
           <div
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
             aria-busy="true"
             aria-label="Đang tải vật phẩm"
           >
@@ -384,7 +386,7 @@ export default function BrowseItems() {
             </div>
           </Card>
         ) : items.length ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => <ItemCard key={item.item_id} item={item} />)}
           </div>
         ) : (
@@ -399,7 +401,7 @@ export default function BrowseItems() {
                 : "Hãy trở thành người đầu tiên đăng một vật phẩm để chia sẻ với cộng đồng."}
             </p>
             <Button
-              color={hasActiveFilters ? "light" : "success"}
+              color={hasActiveFilters ? "light" : "default"}
               className="mx-auto mt-5"
               onClick={hasActiveFilters ? clearFilters : () => setShowCreate(true)}
             >

@@ -28,29 +28,80 @@ import {
   SlidersHorizontal,
   ArrowUpCircle,
   ArrowDownCircle,
-  Shield,
   CheckCircle2,
   AlertTriangle,
   Flame,
 } from "lucide-react";
 import UserLayout from "../../layouts/UserLayout";
+import { adjustUserLevel } from "../../services/userService";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+const LEVEL_CONFIGS = {
+  1: {
+    level_id: 1,
+    level_name: "Tân thủ",
+    min_karma: 0,
+    max_karma: 200,
+    borrow_limit: 2,
+    deposit_discount_pct: 0,
+    badgeColor: "gray",
+    tag: "TÂN THỦ",
+    title: "Tân Thủ Campus",
+    motto: "Mỗi hành động nhỏ đều là bước khởi đầu.",
+    icon: BookOpen,
+    gradient: "from-gray-500 to-gray-700",
+  },
+  2: {
+    level_id: 2,
+    level_name: "Tích cực",
+    min_karma: 201,
+    max_karma: 1000,
+    borrow_limit: 5,
+    deposit_discount_pct: 20,
+    badgeColor: "blue",
+    tag: "TÍCH CỰC",
+    title: "Tích Cực Xanh",
+    motto: "Uy tín được xây từng ngày, từng việc nhỏ.",
+    icon: ShieldCheck,
+    gradient: "from-blue-500 to-blue-700",
+  },
+  3: {
+    level_id: 3,
+    level_name: "Đại sứ Xanh",
+    min_karma: 1001,
+    max_karma: 999999,
+    borrow_limit: 10,
+    deposit_discount_pct: 50,
+    badgeColor: "emerald",
+    tag: "ĐẠI SỨ XANH",
+    title: "Đại Sứ Xanh",
+    motto: "Lãnh đạo bằng hành động, truyền cảnh bằng sẻ chia.",
+    icon: Crown,
+    gradient: "from-emerald-500 to-teal-700",
+  },
+};
 
 export default function Profile() {
   const [user, setUser] = useState(null);
-  const [levelStatus, setLevelStatus] = useState(null);
+  const [levelStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState("");
+  const [actionNotification, setActionNotification] = useState(null);
+  const [showSimulator, setShowSimulator] = useState(false);
+  const [activeTabLevel, setActiveTabLevel] = useState(1);
+  const [customKarmaAmount, setCustomKarmaAmount] = useState("");
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfileData();
   }, []);
 
-  const fetchProfileData = async () => {
+  async function fetchProfileData() {
     try {
       setLoading(true);
       setError("");
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+      const res = await fetch(`${API_URL}/auth/me`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -59,21 +110,15 @@ export default function Profile() {
       if (!res.ok)
         throw new Error(data.message || "Không thể tải thông tin profile");
 
-      const currentUser = dataProfile.user || dataProfile.data;
+      const currentUser = data.user || data.data;
       setUser(currentUser);
-
-      if (resLevel?.data) {
-        setLevelStatus(resLevel.data);
-        setActiveTabLevel(
-          resLevel.data.level?.level_id || currentUser?.level_id || 1,
-        );
-      }
+      setActiveTabLevel(currentUser.level_id || currentUser.level?.level_id || 1);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleLogout = async () => {
     try {
@@ -104,10 +149,10 @@ export default function Profile() {
 
         if (change_type === "LEVEL_UP") {
           type = "success";
-          title = `🎉 Chúc mừng! Bạn đã thăng hạng lên Cấp "${current_level.level_name}"!`;
+          title = `Chúc mừng! Bạn đã thăng hạng lên cấp "${current_level.level_name}"!`;
         } else if (change_type === "LEVEL_DOWN") {
           type = "warning";
-          title = `⚠️ Cảnh báo: Cấp độ đã hạ xuống "${current_level.level_name}"!`;
+          title = `Cấp độ đã được điều chỉnh xuống "${current_level.level_name}".`;
         } else {
           title = `Điểm Karma: ${karma_difference > 0 ? "+" : ""}${karma_difference} (${current_karma} Karma)`;
         }
@@ -136,7 +181,7 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 gap-3">
-        <Spinner size="xl" color="success" />
+        <Spinner size="xl" />
         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 animate-pulse">
           Đang tải dữ liệu hồ sơ sinh viên...
         </p>
@@ -208,7 +253,7 @@ export default function Profile() {
 
   return (
     <UserLayout>
-      <div className="max-w-5xl space-y-6 mx-auto pb-12">
+      <div className="mx-auto max-w-5xl space-y-7 pb-12">
         {/* --- NOTIFICATION BANNER KHI THỰC HIỆN API LEVEL --- */}
         {actionNotification && (
           <Alert
@@ -238,13 +283,13 @@ export default function Profile() {
         {/* --- HEADER PROFILE & AVATAR --- */}
         <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 shadow-sm">
           {/* Banner Gradient Phông nền */}
-          <div className="relative h-32 sm:h-36 bg-linear-to-r from-emerald-600 via-teal-600 to-cyan-700 p-6 flex justify-between items-start">
+          <div className="editorial-grid relative flex min-h-44 flex-col items-start justify-between gap-4 bg-slate-950 p-6 sm:min-h-40 sm:flex-row">
             <div className="flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
               <span>Campus Karma Profile</span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button
                 size="xs"
                 color="light"
@@ -257,15 +302,17 @@ export default function Profile() {
                 />
                 Làm mới
               </Button>
-              <Button
-                size="xs"
-                color="light"
-                onClick={() => setShowSimulator(!showSimulator)}
-                className="bg-white/90 dark:bg-gray-800/90 hover:bg-white text-gray-700 dark:text-gray-200 shadow-xs"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5 mr-1 text-emerald-600" />
-                {showSimulator ? "Ẩn Test API" : "Test API Level"}
-              </Button>
+              {import.meta.env.DEV && (
+                <Button
+                  size="xs"
+                  color="light"
+                  onClick={() => setShowSimulator(!showSimulator)}
+                  className="bg-white/90 text-slate-700 shadow-xs dark:bg-slate-900/90 dark:text-slate-200"
+                >
+                  <SlidersHorizontal className="mr-1 h-3.5 w-3.5 text-amber-700" />
+                  {showSimulator ? "Ẩn công cụ test" : "Công cụ test Level"}
+                </Button>
+              )}
             </div>
           </div>
 
@@ -292,15 +339,15 @@ export default function Profile() {
                   />
                   {/* Badge icon nhỏ trên avatar */}
                   <div className="absolute bottom-0 right-0 p-1 bg-white dark:bg-gray-800 rounded-full shadow-md">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white text-xs">
-                      ✓
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white">
+                      <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
                     </span>
                   </div>
                 </div>
 
                 <div className="space-y-1">
                   <div className="flex items-center justify-center sm:justify-start gap-2">
-                    <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
+                    <h1 className="font-display text-3xl font-semibold tracking-tight text-slate-950 dark:text-white sm:text-4xl">
                       {user.full_name}
                     </h1>
                     {user.is_verified && (
@@ -350,7 +397,7 @@ export default function Profile() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* CỘT TRÁI (5/12): THẺ SỐ DƯ KARMA */}
           <div className="lg:col-span-5 flex flex-col gap-4">
-            <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-emerald-600 via-teal-700 to-slate-900 text-white p-6 shadow-xl flex flex-col justify-between min-h-[260px] border border-emerald-400/20">
+            <div className="editorial-grid relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl">
               {/* Background watermark icon */}
               <div className="absolute -right-6 -bottom-6 opacity-10 pointer-events-none">
                 <Zap className="w-48 h-48 text-white fill-white" />
@@ -552,7 +599,7 @@ export default function Profile() {
                 </h3>
 
                 {/* Tabs chọn xem đặc quyền các cấp độ */}
-                <div className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center justify-end gap-1">
                   {allLevels.map((lvl) => (
                     <button
                       key={lvl.level_id}
@@ -608,8 +655,8 @@ export default function Profile() {
                   </div>
                   <p className="text-xs font-bold text-gray-900 dark:text-white mt-1">
                     {(selectedTier?.level_id ?? 1) >= 2 ? (
-                      <span className="text-emerald-600 dark:text-emerald-400 font-black">
-                        ✓ Mở khóa chat trực tiếp
+                      <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-black">
+                        <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" /> Mở khóa chat trực tiếp
                       </span>
                     ) : (
                       <span className="text-amber-600 dark:text-amber-400">
@@ -627,7 +674,7 @@ export default function Profile() {
         </div>
 
         {/* --- BỘ ĐIỀU KHIỂN THỬ NGHIỆM API LÊN/XUỐNG LEVEL (LEVEL SIMULATOR) --- */}
-        {showSimulator && (
+        {import.meta.env.DEV && showSimulator && (
           <div className="bg-linear-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 shadow-xl border border-indigo-500/30">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-indigo-800/60">
               <div className="flex items-center gap-3">
@@ -780,7 +827,7 @@ export default function Profile() {
                 </div>
 
                 <p className="text-[11px] text-indigo-300/70 pt-1">
-                  💡 Sau này khi tích hợp hệ thống nhiệm vụ (missions), module
+                  Khi tích hợp hệ thống nhiệm vụ (missions), module
                   missions chỉ cần gọi hàm{" "}
                   <code className="text-yellow-300 font-mono">
                     adjustUserKarmaAndLevel()

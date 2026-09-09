@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { getQRCode } from "../../services/transactionService";
 import { RefreshCw, Clock, ShieldCheck, AlertCircle } from "lucide-react";
+import { Button } from "flowbite-react";
 
 export default function QRDisplay({ transaction }) {
   const canvasRef = useRef(null);
@@ -25,7 +26,7 @@ export default function QRDisplay({ transaction }) {
           width: 240,
           margin: 2,
           color: {
-            dark: "#065f46", // màu emerald đậm
+            dark: "#0f172a",
             light: "#ffffff",
           },
         });
@@ -68,7 +69,7 @@ export default function QRDisplay({ transaction }) {
       QRCode.toCanvas(canvasRef.current, token, {
         width: 240,
         margin: 2,
-        color: { dark: "#065f46", light: "#ffffff" },
+        color: { dark: "#0f172a", light: "#ffffff" },
       });
     }
   }, [token]);
@@ -104,7 +105,7 @@ export default function QRDisplay({ transaction }) {
           </button>
         </div>
       ) : (
-        <div className="relative p-4 bg-white dark:bg-gray-700 rounded-2xl shadow-md border-2 border-emerald-500/30 flex flex-col items-center">
+        <div className="relative flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-4 shadow-lg dark:border-slate-700 dark:bg-slate-800">
           <canvas ref={canvasRef} className="rounded-lg" />
           {loading && (
             <div className="absolute inset-0 bg-white/80 dark:bg-gray-700/80 rounded-2xl flex items-center justify-center">
@@ -157,14 +158,16 @@ export default function QRDisplay({ transaction }) {
           </span>
           <span>Tự động cập nhật sau {expiresIn}s</span>
         </div>
-        <button
+        <Button
+          color="light"
+          size="xs"
           onClick={fetchQR}
           disabled={loading}
-          title="Làm mới ngay"
-          className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors ml-1 text-gray-500 hover:text-emerald-600"
+          aria-label="Làm mới mã QR ngay"
+          className="ml-1 h-8 w-8 px-0"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-        </button>
+        </Button>
       </div>
 
       <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800">

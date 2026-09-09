@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { Html5Qrcode } from "html5-qrcode";
 import { verifyQR } from "../../services/transactionService";
 import {
   Camera,
@@ -9,6 +8,7 @@ import {
   ScanLine,
   RefreshCw,
 } from "lucide-react";
+import { Button } from "flowbite-react";
 
 export default function QRScanner({ transaction, onSuccess }) {
   const scannerRef = useRef(null);
@@ -22,6 +22,7 @@ export default function QRScanner({ transaction, onSuccess }) {
     setResult(null);
 
     try {
+      const { Html5Qrcode } = await import("html5-qrcode");
       const html5QrCode = new Html5Qrcode("qr-reader-container");
       qrRef.current = html5QrCode;
 
@@ -106,7 +107,7 @@ export default function QRScanner({ transaction, onSuccess }) {
             <>
               <CheckCircle2 className="w-14 h-14 text-emerald-500" />
               <p className="font-bold text-emerald-800 dark:text-emerald-200 text-base">
-                🎉 Giao nhận thành công!
+                Giao nhận thành công
               </p>
               <p className="text-sm text-emerald-700 dark:text-emerald-300">
                 {result.message}
@@ -121,12 +122,12 @@ export default function QRScanner({ transaction, onSuccess }) {
               <p className="text-sm text-red-600 dark:text-red-400">
                 {result.message}
               </p>
-              <button
+              <Button
+                color="failure"
                 onClick={reset}
-                className="flex items-center gap-2 px-5 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700"
               >
                 <RefreshCw className="w-4 h-4" /> Thử lại
-              </button>
+              </Button>
             </>
           )}
         </div>
@@ -135,7 +136,7 @@ export default function QRScanner({ transaction, onSuccess }) {
       {/* Camera viewfinder */}
       {!result && (
         <>
-          <div className="relative w-72 h-72 bg-black rounded-2xl overflow-hidden shadow-xl flex items-center justify-center">
+          <div className="relative aspect-square w-full max-w-72 overflow-hidden rounded-2xl bg-black shadow-xl">
             <div id="qr-reader-container" className="w-full h-full" ref={scannerRef} />
             {!scanning && !loading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gray-900/90">
@@ -156,22 +157,21 @@ export default function QRScanner({ transaction, onSuccess }) {
 
           <div className="flex gap-3">
             {!scanning ? (
-              <button
+              <Button
                 onClick={startScanner}
                 disabled={loading}
-                className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold transition-all disabled:opacity-50 shadow-lg shadow-emerald-200 dark:shadow-none"
               >
                 <ScanLine className="w-5 h-5" />
                 {loading ? "Đang xử lý..." : "Bật camera quét QR"}
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
+                color="light"
                 onClick={stopScanner}
-                className="flex items-center gap-2 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-semibold transition-all"
               >
                 <XCircle className="w-5 h-5" />
                 Dừng camera
-              </button>
+              </Button>
             )}
           </div>
 

@@ -1,24 +1,115 @@
-import { useState } from 'react';
-import { ArrowLeft, ArrowRight, BadgeCheck, Banknote, Check, ShieldCheck } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import UserLayout from '../../layouts/UserLayout';
-import { createKarmaTopup } from '../../services/walletService';
+import { useState } from "react";
+import { Alert, Badge, Button, Card, Spinner } from "flowbite-react";
+import { ArrowLeft, ArrowRight, BadgeCheck, Banknote, Check, ShieldCheck } from "lucide-react";
+import { Link } from "react-router-dom";
+import UserLayout from "../../layouts/UserLayout";
+import { createKarmaTopup } from "../../services/walletService";
 
-const options = [{ amount_vnd: 10000, karma_received: 100 }, { amount_vnd: 20000, karma_received: 200 }, { amount_vnd: 50000, karma_received: 550 }, { amount_vnd: 100000, karma_received: 1200 }, { amount_vnd: 200000, karma_received: 2500 }, { amount_vnd: 500000, karma_received: 5750 },];
-const money = new Intl.NumberFormat('vi-VN');
+const options = [
+  { amount_vnd: 10000, karma_received: 100 },
+  { amount_vnd: 20000, karma_received: 200 },
+  { amount_vnd: 50000, karma_received: 550, bonus: "Tặng 10%" },
+  { amount_vnd: 100000, karma_received: 1200, bonus: "Tặng 20%" },
+  { amount_vnd: 200000, karma_received: 2500, bonus: "Tặng 25%" },
+  { amount_vnd: 500000, karma_received: 5750, bonus: "Giá trị cao" },
+];
+const money = new Intl.NumberFormat("vi-VN");
 
 export default function TopUp() {
   const [selected, setSelected] = useState(options[1]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const submit = async () => {
-    setLoading(true); setError('');
+    setLoading(true);
+    setError("");
     try {
       const data = await createKarmaTopup(selected);
       window.location.assign(data.payment_url);
-    } catch (err) { setError(err.message); setLoading(false); }
+    } catch (submitError) {
+      setError(submitError.message);
+      setLoading(false);
+    }
   };
 
-  return <UserLayout><div className="mx-auto max-w-5xl space-y-8 pb-12"><Link to="/wallet" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-emerald-700"><ArrowLeft size={16} /> Quay lại Ví Karma</Link><div><p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-emerald-600">Add balance</p><h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Nạp Karma</h1><p className="mt-2 text-slate-500 dark:text-slate-400">Chọn một mệnh giá. Bạn sẽ được chuyển đến PayOS để hoàn tất thanh toán.</p></div><div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]"><section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800"><div className="mb-5 flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"><Banknote size={20} /></span><div><h2 className="font-bold text-slate-900 dark:text-white">Mệnh giá nạp</h2><p className="text-sm text-slate-500">Tỷ lệ quy đổi có thể thay đổi theo chương trình.</p></div></div><div className="grid gap-3 sm:grid-cols-2">{options.map((option) => <button key={option.amount_vnd} onClick={() => setSelected(option)} className={`relative rounded-xl border p-4 text-left transition ${selected.amount_vnd === option.amount_vnd ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-100 dark:bg-emerald-900/20 dark:ring-emerald-900/40' : 'border-slate-200 hover:border-emerald-300 dark:border-slate-600'}`}><span className="block text-lg font-black text-slate-900 dark:text-white">{money.format(option.amount_vnd)} đ</span><span className="mt-1 block text-sm font-semibold text-emerald-700 dark:text-emerald-400">+{money.format(option.karma_received)} Karma</span>{selected.amount_vnd === option.amount_vnd && <span className="absolute right-3 top-3 grid h-5 w-5 place-items-center rounded-full bg-emerald-600 text-white"><Check size={13} /></span>}</button>)}</div></section><aside className="rounded-2xl bg-slate-900 p-6 text-white shadow-xl"><p className="text-sm font-semibold text-slate-300">Tóm tắt giao dịch</p><div className="mt-7 border-b border-white/10 pb-5"><p className="text-sm text-slate-400">Bạn sẽ nhận</p><p className="mt-1 text-4xl font-black text-lime-300">{money.format(selected.karma_received)} <span className="text-base text-slate-300">Karma</span></p></div><div className="flex items-center justify-between py-5 text-sm"><span className="text-slate-400">Thanh toán</span><span className="font-bold">{money.format(selected.amount_vnd)} đ</span></div>{error && <p className="mb-4 rounded-lg bg-rose-500/15 p-3 text-sm text-rose-200">{error}</p>}<button onClick={submit} disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-3.5 font-bold text-white transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60">{loading ? 'Đang tạo giao dịch...' : 'Tiếp tục với PayOS'} {!loading && <ArrowRight size={17} />}</button><div className="mt-5 flex items-start gap-2 text-xs leading-5 text-slate-400"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-emerald-400" /> Giao dịch được xử lý trên cổng PayOS bảo mật.</div></aside></div><div className="flex items-center gap-2 text-sm text-slate-500"><BadgeCheck size={17} className="text-emerald-600" /> Karma chỉ được cộng sau khi PayOS xác nhận thành công.</div></div></UserLayout>;
+  return (
+    <UserLayout>
+      <div className="mx-auto max-w-5xl space-y-8 pb-12">
+        <Link to="/wallet" className="inline-flex items-center gap-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300/40 dark:hover:text-white">
+          <ArrowLeft className="h-4 w-4" /> Quay lại Ví Karma
+        </Link>
+        <header className="border-b border-slate-200 pb-7 dark:border-slate-800">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">Nạp số dư</p>
+          <h1 className="font-display text-4xl font-semibold text-slate-950 dark:text-white sm:text-5xl">Nạp Karma</h1>
+          <p className="mt-3 max-w-2xl text-slate-500 dark:text-slate-400">
+            Chọn một mệnh giá, kiểm tra tóm tắt và hoàn tất thanh toán an toàn qua PayOS.
+          </p>
+        </header>
+
+        <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <Card>
+            <div className="flex items-center gap-3">
+              <span className="grid h-11 w-11 place-items-center rounded-xl bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-amber-400">
+                <Banknote className="h-5 w-5" />
+              </span>
+              <div>
+                <h2 className="font-display text-2xl font-semibold text-slate-950 dark:text-white">Chọn mệnh giá</h2>
+                <p className="text-sm text-slate-500">Mệnh giá lớn được cộng thêm Karma.</p>
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {options.map((option) => {
+                const active = selected.amount_vnd === option.amount_vnd;
+                return (
+                  <button
+                    key={option.amount_vnd}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => setSelected(option)}
+                    className={`relative rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300/40 ${
+                      active
+                        ? "border-slate-900 bg-slate-900 text-white dark:border-amber-400 dark:bg-amber-400 dark:text-slate-950"
+                        : "border-slate-200 bg-white hover:border-slate-400 dark:border-slate-700 dark:bg-slate-900"
+                    }`}
+                  >
+                    {option.bonus && <Badge color={active ? "warning" : "success"} className="mb-3 w-fit">{option.bonus}</Badge>}
+                    <span className="block font-display text-2xl font-semibold">{money.format(option.amount_vnd)} đ</span>
+                    <span className={`mt-1 block text-sm font-bold ${active ? "text-amber-300 dark:text-slate-700" : "text-amber-700 dark:text-amber-400"}`}>
+                      +{money.format(option.karma_received)} Karma
+                    </span>
+                    {active && <span className="absolute right-3 top-3 grid h-6 w-6 place-items-center rounded-full bg-amber-400 text-slate-950 dark:bg-slate-950 dark:text-amber-400"><Check className="h-4 w-4" /></span>}
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
+
+          <aside className="editorial-grid h-fit rounded-3xl bg-slate-950 p-6 text-white shadow-xl sm:p-7">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-400">Tóm tắt giao dịch</p>
+            <div className="mt-8 border-b border-white/10 pb-6">
+              <p className="text-sm text-slate-400">Bạn sẽ nhận</p>
+              <p className="mt-2 font-display text-5xl font-semibold text-amber-400">{money.format(selected.karma_received)}</p>
+              <p className="mt-1 text-sm font-bold text-slate-300">Karma</p>
+            </div>
+            <div className="flex items-center justify-between py-6 text-sm">
+              <span className="text-slate-400">Thanh toán</span>
+              <span className="font-bold">{money.format(selected.amount_vnd)} đ</span>
+            </div>
+            {error && <Alert color="failure" className="mb-4">{error}</Alert>}
+            <Button onClick={submit} disabled={loading} size="lg" className="w-full bg-amber-400 text-slate-950 hover:bg-amber-300">
+              {loading ? <Spinner size="sm" className="mr-2" /> : null}
+              {loading ? "Đang tạo giao dịch..." : "Tiếp tục với PayOS"}
+              {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
+            </Button>
+            <p className="mt-5 flex items-start gap-2 text-xs leading-5 text-slate-400">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" /> Giao dịch được xử lý trên cổng PayOS bảo mật.
+            </p>
+          </aside>
+        </div>
+        <p className="flex items-center gap-2 text-sm text-slate-500">
+          <BadgeCheck className="h-4 w-4 text-emerald-600" /> Karma chỉ được cộng sau khi PayOS xác nhận thành công.
+        </p>
+      </div>
+    </UserLayout>
+  );
 }

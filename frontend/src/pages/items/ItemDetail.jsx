@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Badge, Button, Spinner, Alert } from "flowbite-react";
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  Spinner,
+  TextInput,
+} from "flowbite-react";
 import {
   MapPin,
   Zap,
@@ -17,7 +28,7 @@ import UserLayout from "../../layouts/UserLayout";
 import { useAuth } from "../../context/AuthContext";
 import { createTransaction } from "../../services/transactionService";
 
-const API = import.meta.env.VITE_API_URL;
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const TYPE_LABEL = { GIVE: "Tặng", LEND: "Cho mượn", BORROW: "Cho mượn", SELL: "Bán", EXCHANGE: "Bán" };
 const TYPE_COLOR = { GIVE: "success", LEND: "info", BORROW: "info", SELL: "warning", EXCHANGE: "warning" };
@@ -97,18 +108,18 @@ export default function ItemDetail() {
 
   return (
     <UserLayout>
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="mx-auto max-w-5xl space-y-7 pb-10">
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-emerald-600 transition-colors"
+          className="flex items-center gap-2 rounded-lg text-sm font-semibold text-slate-500 transition-colors hover:text-slate-950 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300/40 dark:hover:text-white"
         >
           <ArrowLeft className="w-4 h-4" /> Quay lại
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.05fr_0.95fr]">
           {/* Hình ảnh */}
-          <div className="rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800 aspect-square">
+          <div className="aspect-square overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             {item.image_url ? (
               <img
                 src={item.image_url}
@@ -123,7 +134,7 @@ export default function ItemDetail() {
           </div>
 
           {/* Thông tin */}
-          <div className="space-y-5">
+          <div className="space-y-6 lg:py-3">
             {/* Badges */}
             <div className="flex flex-wrap gap-2">
               <Badge color={TYPE_COLOR[item.type] || "gray"} size="sm">
@@ -136,7 +147,7 @@ export default function ItemDetail() {
             </div>
 
             {/* Tên */}
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="font-display text-4xl font-semibold leading-tight text-slate-950 dark:text-white sm:text-5xl">
               {item.title}
             </h1>
 
@@ -156,14 +167,14 @@ export default function ItemDetail() {
             )}
 
             {/* Karma breakdown */}
-            <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 rounded-xl p-4 space-y-2">
+            <div className="space-y-3 rounded-2xl border border-amber-200 bg-amber-50/70 p-5 dark:border-amber-900/50 dark:bg-amber-950/20">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
                   <Zap className="w-3.5 h-3.5 text-yellow-500" />
                   Phí {item.type === "GIVE" ? "nhận" : "mượn"}:
                 </span>
                 <span className="font-bold text-gray-900 dark:text-white">
-                  {item.karma_value} ⚡
+                  {item.karma_value} Karma
                 </span>
               </div>
               {item.type !== "GIVE" && (
@@ -173,7 +184,7 @@ export default function ItemDetail() {
                     Đặt cọc (Level {user?.level?.level_name || "Tân thủ"}):
                   </span>
                   <span className="font-bold text-gray-900 dark:text-white">
-                    {estimatedDeposit} ⚡
+                    {estimatedDeposit} Karma
                     {discountPct > 0 && (
                       <span className="ml-1 text-xs text-emerald-600">(-{discountPct}%)</span>
                     )}
@@ -183,13 +194,13 @@ export default function ItemDetail() {
               <div className="border-t border-emerald-200 dark:border-emerald-700 pt-2 flex justify-between font-bold">
                 <span className="text-gray-800 dark:text-gray-200">Tổng cần có:</span>
                 <span className="text-emerald-700 dark:text-emerald-400 text-lg">
-                  {totalKarma} ⚡
+                  {totalKarma} Karma
                 </span>
               </div>
               <p className="text-xs text-gray-400 pt-1">
                 Số dư của bạn:{" "}
                 <span className={`font-bold ${user?.karma_balance >= totalKarma ? "text-emerald-600" : "text-red-500"}`}>
-                  {user?.karma_balance ?? "..."} ⚡
+                  {user?.karma_balance ?? "..."} Karma
                 </span>
               </p>
             </div>
@@ -221,7 +232,7 @@ export default function ItemDetail() {
               </div>
             ) : (
               <Button
-                color="success"
+                color="default"
                 size="lg"
                 className="w-full dark:text-white"
                 onClick={() => setShowModal(true)}
@@ -234,7 +245,7 @@ export default function ItemDetail() {
         </div>
 
         {/* Thông tin người cho */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+        <Card>
           <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
             <User className="w-4 h-4 text-emerald-500" />
             Người {item.type === "GIVE" ? "tặng" : "cho mượn"}
@@ -255,35 +266,32 @@ export default function ItemDetail() {
               </p>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Modal xác nhận mượn */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 space-y-5">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-              Xác nhận {item.type === "GIVE" ? "nhận" : "mượn"} đồ
-            </h3>
-
-            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 space-y-2 text-sm">
+      <Modal show={showModal} size="md" onClose={() => setShowModal(false)} dismissible={!borrowing}>
+        <ModalHeader>Xác nhận {item.type === "GIVE" ? "nhận" : "mượn"} đồ</ModalHeader>
+        <ModalBody>
+          <div className="space-y-5">
+            <div className="space-y-2 rounded-2xl bg-slate-50 p-4 text-sm dark:bg-slate-800/70">
               <div className="flex justify-between">
                 <span className="text-gray-500">Vật phẩm:</span>
                 <span className="font-semibold text-gray-900 dark:text-white max-w-[180px] text-right">{item.title}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Phí {item.type === "GIVE" ? "nhận" : "mượn"}:</span>
-                <span className="font-bold">{item.karma_value} ⚡</span>
+                <span className="font-bold">{item.karma_value} Karma</span>
               </div>
               {estimatedDeposit > 0 && (
                 <div className="flex justify-between">
                   <span className="text-gray-500">Cọc:</span>
-                  <span className="font-bold">{estimatedDeposit} ⚡</span>
+                  <span className="font-bold">{estimatedDeposit} Karma</span>
                 </div>
               )}
               <div className="border-t border-gray-200 dark:border-gray-600 pt-2 flex justify-between font-bold">
                 <span>Tổng Karma bị khóa:</span>
-                <span className="text-emerald-600 dark:text-emerald-400">{totalKarma} ⚡</span>
+                <span className="text-emerald-600 dark:text-emerald-400">{totalKarma} Karma</span>
               </div>
             </div>
 
@@ -293,12 +301,11 @@ export default function ItemDetail() {
                   <Calendar className="w-4 h-4 text-emerald-500" />
                   Hạn trả đồ
                 </label>
-                <input
+                <TextInput
                   type="date"
                   value={dueDate}
                   min={new Date().toISOString().split("T")[0]}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-white"
                 />
               </div>
             )}
@@ -307,29 +314,6 @@ export default function ItemDetail() {
               <Alert color="failure" className="text-sm">{borrowError}</Alert>
             )}
 
-            <div className="flex gap-3">
-              <Button
-                color="gray"
-                className="flex-1"
-                onClick={() => { setShowModal(false); setBorrowError(""); }}
-                disabled={borrowing}
-              >
-                Hủy
-              </Button>
-              <Button
-                color="success"
-                className="flex-1 dark:text-white"
-                onClick={handleBorrow}
-                disabled={borrowing || (user?.karma_balance ?? 0) < totalKarma}
-              >
-                {borrowing ? (
-                  <><Spinner size="sm" className="mr-2" /> Đang xử lý...</>
-                ) : (
-                  <><Zap className="w-4 h-4 mr-1.5 fill-yellow-300 text-yellow-300" /> Xác nhận</>
-                )}
-              </Button>
-            </div>
-
             {(user?.karma_balance ?? 0) < totalKarma && (
               <p className="text-xs text-center text-red-500">
                 Không đủ Karma. Cần {totalKarma}, bạn có {user?.karma_balance}.{" "}
@@ -337,8 +321,17 @@ export default function ItemDetail() {
               </p>
             )}
           </div>
-        </div>
-      )}
+        </ModalBody>
+        <ModalFooter>
+          <Button onClick={handleBorrow} disabled={borrowing || (user?.karma_balance ?? 0) < totalKarma}>
+            {borrowing ? <Spinner size="sm" className="mr-2" /> : <Zap className="mr-2 h-4 w-4" />}
+            {borrowing ? "Đang xử lý..." : "Xác nhận"}
+          </Button>
+          <Button color="light" onClick={() => { setShowModal(false); setBorrowError(""); }} disabled={borrowing}>
+            Hủy
+          </Button>
+        </ModalFooter>
+      </Modal>
     </UserLayout>
   );
 }

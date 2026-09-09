@@ -110,15 +110,15 @@ export default function MyItems() {
   return (
     <UserLayout>
       <section className="pb-12">
-        <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div className="mb-8 flex flex-col justify-between gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end dark:border-slate-800">
           <div>
-            <p className="mb-1 text-sm font-semibold uppercase tracking-wider text-emerald-600">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
               Quản lý bài đăng
             </p>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            <h1 className="font-display text-4xl font-semibold text-slate-950 dark:text-white sm:text-5xl">
               Vật phẩm của tôi
             </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-slate-500 dark:text-slate-400">
               Theo dõi trạng thái, chỉnh sửa hoặc xóa vật phẩm bạn đã đăng.
             </p>
           </div>
@@ -259,7 +259,7 @@ export default function MyItems() {
                         <Button type="button" color="light" onClick={cancelEdit}>
                           <X className="mr-2 h-4 w-4" /> Hủy
                         </Button>
-                        <Button type="submit" color="success" disabled={saving}>
+                        <Button type="submit" disabled={saving}>
                           {saving ? (
                             <Spinner size="sm" className="mr-2" />
                           ) : (
@@ -274,7 +274,7 @@ export default function MyItems() {
                       <img
                         src={item.image_url || "/logo.png"}
                         alt={item.title}
-                        className="h-44 w-full rounded-lg object-cover md:w-56"
+                        className="h-48 w-full rounded-xl bg-slate-100 object-cover md:w-60 dark:bg-slate-800"
                       />
                       <div className="min-w-0 flex-1">
                         <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -282,7 +282,7 @@ export default function MyItems() {
                           <Badge color="gray">{item.category.name}</Badge>
                           <Badge color="info">{typeLabels[item.type] || item.type}</Badge>
                         </div>
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        <h2 className="font-display text-2xl font-semibold text-slate-950 dark:text-white">
                           {item.title}
                         </h2>
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">

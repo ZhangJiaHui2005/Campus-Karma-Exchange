@@ -9,6 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Alert, Button, Spinner } from "flowbite-react";
 import UserLayout from "../../layouts/UserLayout";
 import { confirmKarmaTopup } from "../../services/walletService";
 
@@ -76,41 +77,35 @@ export default function TopUpResult() {
   return (
     <UserLayout>
       <div className="mx-auto max-w-xl py-10">
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-xl shadow-slate-900/5 dark:border-slate-700 dark:bg-slate-800 sm:p-12">
+        <div className="editorial-grid rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 sm:p-12">
           {renderIcon()}
-          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.18em] dark:text-white">
-            Payment result
+          <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-amber-700 dark:text-amber-400">
+            Kết quả thanh toán
           </p>
-          <h1 className="mt-2 text-3xl font-black text-slate-900 dark:text-white">
+          <h1 className="mt-2 font-display text-4xl font-semibold text-slate-950 dark:text-white">
             {result?.title}
           </h1>
           <p className="mx-auto mt-3 max-w-md text-slate-500 dark:text-slate-400">
             {result?.detail}
           </p>
           {confirming && (
-            <p className="mt-4 text-sm text-emerald-600">
-              Đang xác nhận thanh toán...
+            <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300">
+              <Spinner size="sm" /> Đang xác nhận thanh toán...
             </p>
           )}
           {confirmed && (
             <p className="mt-4 text-sm font-semibold text-emerald-600">
-              ✓ Đã cộng Karma thành công!
+              Đã cộng Karma thành công.
             </p>
           )}
-          {error && <p className="mt-4 text-sm text-rose-600">{error}</p>}
+          {error && <Alert color="failure" className="mt-5 text-left">{error}</Alert>}
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link
-              to="/wallet"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-700"
-            >
+            <Button as={Link} to="/wallet">
               <ArrowLeft size={16} /> Về ví Karma
-            </Link>
-            <Link
-              to="/wallet/topup"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-700 hover:border-emerald-400 hover:text-emerald-700 dark:border-slate-600 dark:text-slate-200"
-            >
+            </Button>
+            <Button as={Link} to="/wallet/topup" color="light">
               Nạp lại <ExternalLink size={16} />
-            </Link>
+            </Button>
           </div>
         </div>
         <div className="mt-5 flex justify-center gap-2 text-xs text-slate-400">

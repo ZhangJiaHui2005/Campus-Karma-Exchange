@@ -43,7 +43,7 @@ function TransactionCard({ tx, currentUserId }) {
   return (
     <button
       onClick={() => navigate(`/transactions/${tx.trans_id}`)}
-      className="w-full text-left bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:border-emerald-400 hover:shadow-md transition-all group"
+      className="group w-full rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300/40 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700"
     >
       <div className="flex items-start gap-4">
         {/* Item image */}
@@ -59,7 +59,7 @@ function TransactionCard({ tx, currentUserId }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <p className="font-semibold text-gray-900 dark:text-white text-sm truncate">{tx.item?.title}</p>
-            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-emerald-500 shrink-0 mt-0.5 transition-colors" />
+            <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-slate-400 transition-colors group-hover:text-amber-700 dark:group-hover:text-amber-400" />
           </div>
 
           <div className="flex items-center gap-2 mt-1">
@@ -129,12 +129,13 @@ export default function MyTransactions() {
 
   return (
     <UserLayout>
-      <div className="max-w-3xl mx-auto space-y-5">
+      <div className="mx-auto max-w-4xl space-y-6 pb-10">
         {/* Header */}
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between border-b border-slate-200 pb-7 dark:border-slate-800">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Giao dịch của tôi</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">Lịch sử trao đổi</p>
+            <h1 className="font-display text-4xl font-semibold text-slate-950 dark:text-white sm:text-5xl">Giao dịch của tôi</h1>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
               {activeCount > 0 ? (
                 <span className="text-emerald-600 dark:text-emerald-400 font-medium">{activeCount} giao dịch đang chờ xử lý</span>
               ) : (
@@ -145,15 +146,15 @@ export default function MyTransactions() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-xl">
+        <div className="flex gap-1 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           {TABS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === tab.key
-                  ? "bg-white dark:bg-gray-700 text-emerald-700 dark:text-emerald-400 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  ? "bg-slate-900 text-white shadow-sm dark:bg-amber-400 dark:text-slate-950"
+                  : "text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-200"
               }`}
             >
               {tab.label}

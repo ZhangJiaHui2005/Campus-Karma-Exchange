@@ -8,6 +8,220 @@
   min-height: 100vh;
 }
 
+.user-shell,
+.user-auth {
+  font-family: "Atkinson Hyperlegible", Inter, ui-sans-serif, system-ui, sans-serif;
+  background-image:
+    radial-gradient(circle at 8% 4%, rgb(180 83 9 / 0.055), transparent 24rem),
+    radial-gradient(circle at 92% 18%, rgb(30 58 95 / 0.055), transparent 28rem);
+}
+
+.font-display,
+.user-shell h1,
+.user-shell h2,
+.user-auth h1 {
+  font-family: "Crimson Pro", Georgia, Cambria, serif;
+  text-wrap: balance;
+}
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 0.75rem;
+  background: #0f172a;
+  color: white;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.editorial-grid {
+  background-image:
+    linear-gradient(to right, rgb(148 163 184 / 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(148 163 184 / 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* User navigation — floating Liquid Glass island inspired by iOS 26. */
+.liquid-island {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid rgb(255 255 255 / 0.72);
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.82), rgb(248 250 252 / 0.62));
+  box-shadow:
+    0 16px 44px rgb(15 23 42 / 0.11),
+    0 3px 10px rgb(15 23 42 / 0.06),
+    inset 0 1px 0 rgb(255 255 255 / 0.92),
+    inset 0 -1px 0 rgb(148 163 184 / 0.14);
+  backdrop-filter: blur(28px) saturate(165%);
+  -webkit-backdrop-filter: blur(28px) saturate(165%);
+}
+
+.liquid-island::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 12% -20%, rgb(255 255 255 / 0.95), transparent 32%),
+    radial-gradient(circle at 84% 130%, rgb(180 83 9 / 0.08), transparent 34%);
+  content: "";
+  pointer-events: none;
+}
+
+.dark .liquid-island {
+  border-color: rgb(255 255 255 / 0.1);
+  background: rgb(2 6 23 / 0.58);
+  box-shadow:
+    0 20px 56px rgb(0 0 0 / 0.3),
+    0 3px 12px rgb(0 0 0 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    inset 0 -1px 0 rgb(255 255 255 / 0.025);
+}
+
+.dark .liquid-island::before {
+  background: radial-gradient(circle at 12% -35%, rgb(255 255 255 / 0.08), transparent 38%);
+}
+
+.liquid-logo,
+.liquid-control,
+.liquid-icon-button {
+  border: 1px solid rgb(255 255 255 / 0.7);
+  background: rgb(255 255 255 / 0.52);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.82),
+    0 4px 12px rgb(15 23 42 / 0.07);
+}
+
+.liquid-icon-button:hover,
+.liquid-control:hover {
+  background: rgb(255 255 255 / 0.82);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.94),
+    0 6px 16px rgb(15 23 42 / 0.1);
+  transform: translateY(-1px);
+}
+
+.dark .liquid-logo,
+.dark .liquid-control,
+.dark .liquid-icon-button {
+  border-color: rgb(255 255 255 / 0.11);
+  background: rgb(255 255 255 / 0.07);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    0 5px 16px rgb(0 0 0 / 0.16);
+}
+
+.dark .liquid-icon-button:hover,
+.dark .liquid-control:hover {
+  background: rgb(255 255 255 / 0.13);
+}
+
+.liquid-primary {
+  border: 1px solid rgb(15 23 42 / 0.12);
+  background: rgb(15 23 42 / 0.94);
+  color: white;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.14), 0 5px 16px rgb(15 23 42 / 0.14);
+}
+
+.liquid-primary:hover {
+  background: rgb(30 41 59 / 0.98);
+  transform: translateY(-1px);
+}
+
+.dark .liquid-primary {
+  border-color: rgb(251 191 36 / 0.5);
+  background: rgb(251 191 36 / 0.92);
+  color: rgb(15 23 42);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.42), 0 7px 20px rgb(0 0 0 / 0.24);
+}
+
+.liquid-search input {
+  border-color: rgb(255 255 255 / 0.72) !important;
+  border-radius: 999px !important;
+  background: rgb(255 255 255 / 0.48) !important;
+  box-shadow: inset 0 1px 2px rgb(15 23 42 / 0.07), 0 1px 0 rgb(255 255 255 / 0.82);
+}
+
+.dark .liquid-search input {
+  border-color: rgb(255 255 255 / 0.11) !important;
+  background: rgb(2 6 23 / 0.32) !important;
+  color: rgb(248 250 252) !important;
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.24), 0 1px 0 rgb(255 255 255 / 0.07);
+}
+
+.liquid-popover {
+  border: 1px solid rgb(255 255 255 / 0.68);
+  background: rgb(255 255 255 / 0.86);
+  box-shadow: 0 22px 52px rgb(15 23 42 / 0.18), inset 0 1px 0 rgb(255 255 255 / 0.95);
+  backdrop-filter: blur(30px) saturate(170%);
+  -webkit-backdrop-filter: blur(30px) saturate(170%);
+}
+
+.dark .liquid-popover {
+  border-color: rgb(255 255 255 / 0.13);
+  background: rgb(15 23 42 / 0.86);
+  box-shadow: 0 24px 58px rgb(0 0 0 / 0.48), inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .liquid-island,
+  .liquid-popover {
+    background: rgb(255 255 255 / 0.96);
+  }
+
+  .dark .liquid-island,
+  .dark .liquid-popover {
+    background: rgb(15 23 42 / 0.97);
+  }
+
+  .dark .liquid-island {
+    background: rgb(2 6 23 / 0.97);
+  }
+}
+
+@media (max-width: 767px) {
+  .liquid-nav-group {
+    width: 100%;
+    border-top: 1px solid rgb(255 255 255 / 0.4);
+    padding-top: 0.5rem;
+  }
+
+  .dark .liquid-nav-group {
+    border-top-color: rgb(255 255 255 / 0.1);
+  }
+}
+
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @theme {
   --color-primary-50: oklch(97.9% 0.021 166.113);
   --color-primary-100: oklch(95% 0.052 163.051);

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import {
   ArrowDownLeft,
-  Clock3,
   RefreshCw,
   Sparkles,
   WalletCards,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Alert, Button, Spinner } from "flowbite-react";
 import UserLayout from "../../layouts/UserLayout";
 import { getPaymentHistory } from "../../services/walletService";
 import { useAuth } from "../../context/AuthContext";
@@ -56,47 +56,44 @@ export default function Wallet() {
   return (
     <UserLayout>
       <div className="space-y-8 pb-12">
-        <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <header className="flex flex-col justify-between gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end dark:border-slate-800">
           <div>
-            <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-emerald-600">
-              Karma wallet
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
+              Tài sản tín nhiệm
             </p>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+            <h1 className="font-display text-4xl font-semibold text-slate-950 dark:text-white sm:text-5xl">
               Ví Karma
             </h1>
             <p className="mt-2 max-w-xl text-slate-500 dark:text-slate-400">
               Quản lý điểm tín nhiệm và theo dõi các lần nạp của bạn.
             </p>
           </div>
-          <Link
-            to="/wallet/topup"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition hover:-translate-y-0.5 hover:bg-emerald-700"
-          >
+          <Button as={Link} to="/wallet/topup" size="lg">
             <Sparkles size={17} /> Nạp Karma
-          </Link>
+          </Button>
         </header>
 
-        <section className="relative overflow-hidden rounded-3xl bg-emerald-700 p-6 text-white shadow-xl shadow-emerald-900/15 sm:p-8">
-          <div className="absolute -right-12 -top-16 h-48 w-48 rounded-full border-[24px] border-white/10" />
+        <section className="editorial-grid relative overflow-hidden rounded-3xl bg-slate-950 p-6 text-white shadow-xl shadow-slate-950/15 sm:p-8">
+          <div className="absolute -right-12 -top-16 h-48 w-48 rounded-full border-[24px] border-amber-400/10" />
           <div className="relative flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
             <div>
-              <p className="text-sm font-semibold text-emerald-100">
+              <p className="text-sm font-semibold text-slate-300">
                 Số dư hiện tại
               </p>
               <div className="mt-3 flex items-baseline gap-3">
                 <span className="text-5xl font-black tracking-tight">
                   {money.format(user?.karma_balance || 0)}
                 </span>
-                <span className="text-lg font-bold text-emerald-100">
+                <span className="text-lg font-bold text-amber-400">
                   Karma
                 </span>
               </div>
-              <p className="mt-3 text-sm text-emerald-100/80">
-                Dùng để đăng ký Karma aass hoặc đặt cọc khi mượn đồ.
+              <p className="mt-3 text-sm text-slate-400">
+                Dùng để đăng ký Karma Pass hoặc đặt cọc khi mượn đồ.
               </p>
             </div>
             <div className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 text-sm backdrop-blur">
-              <WalletCards size={20} className="text-lime-200" />
+              <WalletCards size={20} className="text-amber-400" />
               <span>Ví đang hoạt động</span>
             </div>
           </div>
@@ -121,11 +118,11 @@ export default function Wallet() {
             </button>
           </div>
           {loading ? (
-            <div className="flex items-center justify-center gap-2 p-12 text-sm text-slate-500">
-              <Clock3 size={17} className="animate-pulse" /> Đang tải lịch sử...
+            <div className="flex items-center justify-center gap-2 p-12 text-sm text-slate-500" aria-busy="true">
+              <Spinner size="sm" /> Đang tải lịch sử...
             </div>
           ) : error ? (
-            <div className="p-8 text-center text-sm text-rose-600">{error}</div>
+            <div className="p-6"><Alert color="failure">{error}</Alert></div>
           ) : payments.length === 0 ? (
             <div className="p-12 text-center">
               <p className="font-semibold text-slate-700 dark:text-slate-200">
