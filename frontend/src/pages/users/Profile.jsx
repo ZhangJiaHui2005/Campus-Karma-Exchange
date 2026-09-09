@@ -180,27 +180,31 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 gap-3">
-        <Spinner size="xl" />
-        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 animate-pulse">
-          Đang tải dữ liệu hồ sơ sinh viên...
-        </p>
-      </div>
+      <UserLayout>
+        <div className="profile-liquid mx-auto flex min-h-72 max-w-xl flex-col items-center justify-center gap-3 rounded-[2rem] p-8">
+          <Spinner size="xl" />
+          <p className="animate-pulse text-sm font-medium text-slate-500 dark:text-slate-400">
+            Đang tải dữ liệu hồ sơ sinh viên...
+          </p>
+        </div>
+      </UserLayout>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6 max-w-md mx-auto mt-10">
-        <Alert color="failure" icon={AlertTriangle}>
-          <span className="font-medium">Lỗi:</span> {error}
-        </Alert>
-        <div className="mt-4 text-center">
-          <Button color="light" onClick={fetchProfileData}>
-            Thử lại
-          </Button>
+      <UserLayout>
+        <div className="profile-liquid mx-auto max-w-md rounded-[2rem] p-5 sm:p-6">
+          <Alert color="failure" icon={AlertTriangle}>
+            <span className="font-medium">Lỗi:</span> {error}
+          </Alert>
+          <div className="mt-4 text-center">
+            <Button color="light" onClick={fetchProfileData}>
+              Thử lại
+            </Button>
+          </div>
         </div>
-      </div>
+      </UserLayout>
     );
   }
 
@@ -253,7 +257,7 @@ export default function Profile() {
 
   return (
     <UserLayout>
-      <div className="mx-auto max-w-5xl space-y-7 pb-12">
+      <div className="mx-auto max-w-6xl space-y-6 pb-12 sm:space-y-8">
         {/* --- NOTIFICATION BANNER KHI THỰC HIỆN API LEVEL --- */}
         {actionNotification && (
           <Alert
@@ -267,7 +271,7 @@ export default function Profile() {
                     : "info"
             }
             onDismiss={() => setActionNotification(null)}
-            className="shadow-md transition-all duration-300"
+            className="profile-liquid rounded-2xl shadow-none transition-all duration-300"
           >
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm">
@@ -281,21 +285,30 @@ export default function Profile() {
         )}
 
         {/* --- HEADER PROFILE & AVATAR --- */}
-        <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-gray-200/80 dark:border-gray-700/80 shadow-sm">
+        <section className="profile-liquid relative overflow-hidden rounded-[2rem]">
           {/* Banner Gradient Phông nền */}
-          <div className="editorial-grid relative flex min-h-44 flex-col items-start justify-between gap-4 bg-slate-950 p-6 sm:min-h-40 sm:flex-row">
-            <div className="flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5 text-yellow-300" />
-              <span>Campus Karma Profile</span>
+          <div className="profile-liquid-hero editorial-grid relative flex min-h-48 flex-col items-start justify-between gap-6 overflow-hidden p-6 sm:min-h-52 sm:flex-row sm:p-8">
+            <div className="pointer-events-none absolute -right-16 -top-20 h-52 w-52 rounded-full border-[38px] border-amber-400/10 blur-[1px]" />
+            <div className="relative max-w-xl">
+              <div className="profile-liquid-soft inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
+                <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                <span>Campus Karma Profile</span>
+              </div>
+              <p className="mt-5 font-display text-3xl font-semibold tracking-tight text-slate-950 dark:text-white sm:text-4xl">
+                Dấu ấn của bạn trong cộng đồng.
+              </p>
+              <p className="mt-2 max-w-lg text-sm leading-6 text-slate-600 dark:text-slate-400">
+                Theo dõi uy tín, đặc quyền và những giá trị bạn đã tạo ra tại Campus Karma.
+              </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="relative flex flex-wrap items-center gap-2">
               <Button
                 size="xs"
                 color="light"
                 onClick={fetchProfileData}
                 disabled={actionLoading}
-                className="bg-white/90 dark:bg-gray-800/90 hover:bg-white text-gray-700 dark:text-gray-200 shadow-xs"
+                className="liquid-control !rounded-full !border-white/60 !bg-white/55 text-slate-700 shadow-none dark:!border-white/10 dark:!bg-white/[0.06] dark:text-slate-200"
               >
                 <RefreshCw
                   className={`w-3.5 h-3.5 mr-1 ${actionLoading ? "animate-spin" : ""}`}
@@ -307,7 +320,7 @@ export default function Profile() {
                   size="xs"
                   color="light"
                   onClick={() => setShowSimulator(!showSimulator)}
-                  className="bg-white/90 text-slate-700 shadow-xs dark:bg-slate-900/90 dark:text-slate-200"
+                  className="liquid-control !rounded-full !border-white/60 !bg-white/55 text-slate-700 shadow-none dark:!border-white/10 dark:!bg-white/[0.06] dark:text-slate-200"
                 >
                   <SlidersHorizontal className="mr-1 h-3.5 w-3.5 text-amber-700" />
                   {showSimulator ? "Ẩn công cụ test" : "Công cụ test Level"}
@@ -317,32 +330,32 @@ export default function Profile() {
           </div>
 
           {/* Avatar & Thông tin Sinh viên */}
-          <div className="px-6 pb-6 pt-0">
+          <div className="px-6 pb-7 pt-0 sm:px-8 sm:pb-8">
             <div className="flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4 -mt-12 sm:-mt-14">
               <div className="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
                 <div className="relative">
                   <Avatar
-                    img={(props) => (
-                      <img
-                        src={user.avatar || undefined}
-                        alt="Avatar"
-                        referrerPolicy="no-referrer"
-                        className="rounded-full ring-4 ring-white dark:ring-gray-800 shadow-md object-cover"
-                        {...props}
-                      />
-                    )}
+                    img={
+                      user.avatar
+                        ? (props) => (
+                            <img
+                              {...props}
+                              src={user.avatar}
+                              alt={`Ảnh đại diện của ${user.full_name}`}
+                              referrerPolicy="no-referrer"
+                              className={`${props.className || ""} rounded-full object-cover`}
+                            />
+                          )
+                        : undefined
+                    }
                     placeholderInitials={(
                       user.full_name?.charAt(0) || "U"
                     ).toUpperCase()}
                     rounded
                     size="xl"
+                    className="rounded-full shadow-xl ring-4 ring-white/80 dark:ring-slate-950/80"
                   />
                   {/* Badge icon nhỏ trên avatar */}
-                  <div className="absolute bottom-0 right-0 p-1 bg-white dark:bg-gray-800 rounded-full shadow-md">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white">
-                      <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
-                    </span>
-                  </div>
                 </div>
 
                 <div className="space-y-1">
@@ -367,7 +380,7 @@ export default function Profile() {
                     >
                       {user.level?.level_name || currentLevelInfo.name}
                     </Badge>
-                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium">
+                    <span className="profile-liquid-soft rounded-full px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:text-slate-300">
                       Mã SV: #{user.user_id}
                     </span>
                     <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 font-medium">
@@ -383,7 +396,7 @@ export default function Profile() {
                   outline
                   size="sm"
                   onClick={handleLogout}
-                  className="w-full sm:w-auto hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
+                  className="liquid-control w-full !rounded-full !bg-white/40 sm:w-auto dark:!bg-white/[0.04] hover:!border-red-300 hover:!text-red-600 dark:hover:!border-red-500/40 dark:hover:!bg-red-950/20"
                 >
                   <LogOut className="w-4 h-4 mr-2 text-red-500" />
                   Đăng xuất
@@ -391,13 +404,13 @@ export default function Profile() {
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* --- KHU VỰC CHÍNH: VÍ KARMA & HUY HIỆU LEVEL --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           {/* CỘT TRÁI (5/12): THẺ SỐ DƯ KARMA */}
-          <div className="lg:col-span-5 flex flex-col gap-4">
-            <div className="editorial-grid relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-2xl border border-slate-800 bg-slate-950 p-6 text-white shadow-xl">
+          <div className="flex flex-col gap-5 lg:col-span-5">
+            <section className="profile-karma-island editorial-grid relative flex min-h-[280px] flex-col justify-between overflow-hidden rounded-[2rem] p-6 text-white sm:p-7">
               {/* Background watermark icon */}
               <div className="absolute -right-6 -bottom-6 opacity-10 pointer-events-none">
                 <Zap className="w-48 h-48 text-white fill-white" />
@@ -406,7 +419,7 @@ export default function Profile() {
               {/* Header card ví */}
               <div className="flex items-center justify-between z-10">
                 <div className="flex items-center gap-2">
-                  <div className="p-2 bg-white/15 backdrop-blur-md rounded-xl ring-1 ring-white/30">
+                  <div className="rounded-2xl bg-white/10 p-2.5 ring-1 ring-white/20 backdrop-blur-md">
                     <Zap className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-pulse" />
                   </div>
                   <div>
@@ -419,7 +432,7 @@ export default function Profile() {
                   </div>
                 </div>
 
-                <span className="inline-flex items-center gap-1 text-[11px] bg-emerald-400/20 text-emerald-100 px-2.5 py-1 rounded-full border border-emerald-300/30">
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/25 bg-emerald-400/15 px-2.5 py-1 text-[11px] text-emerald-100 backdrop-blur-md">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping" />
                   Khả dụng
                 </span>
@@ -447,26 +460,26 @@ export default function Profile() {
               </div>
 
               {/* Các nút thao tác ví */}
-              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/15 z-10">
+              <div className="z-10 grid grid-cols-2 gap-2 border-t border-white/10 pt-3">
                 <Link
                   to="/wallet/topup"
-                  className="flex items-center justify-center gap-1.5 bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold text-xs py-2 px-3 rounded-xl transition shadow-md"
+                  className="flex items-center justify-center gap-1.5 rounded-full bg-amber-400 px-3 py-2.5 text-xs font-bold text-slate-950 shadow-lg shadow-amber-950/20 transition hover:bg-amber-300"
                 >
                   <Flame className="w-3.5 h-3.5 text-amber-900 fill-amber-900" />
                   Nạp thêm Karma
                 </Link>
                 <Link
                   to="/wallet"
-                  className="flex items-center justify-center gap-1.5 bg-white/15 hover:bg-white/25 text-white font-semibold text-xs py-2 px-3 rounded-xl backdrop-blur-md transition border border-white/20"
+                  className="flex items-center justify-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-2.5 text-xs font-semibold text-white backdrop-blur-md transition hover:bg-white/20"
                 >
                   <Wallet className="w-3.5 h-3.5" />
                   Lịch sử nạp
                 </Link>
               </div>
-            </div>
+            </section>
 
             {/* Thẻ mô tả công dụng số dư Karma */}
-            <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-300 space-y-2">
+            <aside className="profile-liquid-soft space-y-2 rounded-2xl p-5 text-xs text-slate-600 dark:text-slate-300">
               <div className="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                 <span>Công dụng của Điểm Karma</span>
@@ -479,14 +492,14 @@ export default function Profile() {
                   đồ.
                 </li>
               </ul>
-            </div>
+            </aside>
           </div>
 
           {/* CỘT PHẢI (7/12): HUY HIỆU LEVEL & TIẾN TRÌNH THĂNG HẠNG */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
+          <div className="flex flex-col gap-6 lg:col-span-7">
             {/* THẺ HUY HIỆU LEVEL ĐỘC QUYỀN (Theo đúng Image 2) */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/90 dark:border-gray-700/90 p-6 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-gray-700">
+            <section className="profile-liquid rounded-[2rem] p-5 sm:p-6">
+              <div className="flex items-center justify-between border-b border-slate-900/8 pb-4 dark:border-white/8">
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-amber-500" />
                   <h3 className="font-bold text-gray-900 dark:text-white text-base">
@@ -502,7 +515,7 @@ export default function Profile() {
               </div>
 
               {/* Showcase Huy Hiệu (Level Badge) */}
-              <div className="mt-5 p-5 rounded-2xl bg-linear-to-r from-gray-50 to-emerald-50/40 dark:from-gray-900/60 dark:to-emerald-950/20 border border-emerald-100/60 dark:border-emerald-800/40 flex flex-col sm:flex-row items-center gap-5">
+              <div className="profile-liquid-soft mt-5 flex flex-col items-center gap-5 rounded-3xl p-5 sm:flex-row">
                 {/* Visual Huy hiệu */}
                 <div className="relative shrink-0">
                   <div
@@ -528,7 +541,7 @@ export default function Profile() {
                     <h4 className="text-xl font-black text-gray-900 dark:text-white">
                       {currentLevelInfo.title}
                     </h4>
-                    <span className="text-xs px-2 py-0.5 rounded-md bg-white dark:bg-gray-800 font-bold text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+                    <span className="profile-liquid-soft rounded-full px-2.5 py-0.5 text-xs font-bold text-slate-700 dark:text-slate-300">
                       Cấp {currentLevelId}/3
                     </span>
                   </div>
@@ -544,7 +557,7 @@ export default function Profile() {
               </div>
 
               {/* THANH TIẾN TRÌNH THĂNG HẠNG (LEVEL PROGRESS BAR) */}
-              <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+              <div className="mt-6 border-t border-slate-900/8 pt-4 dark:border-white/8">
                 <div className="flex items-center justify-between text-xs mb-2">
                   <div className="flex items-center gap-1.5 font-bold text-gray-700 dark:text-gray-300">
                     <TrendingUp className="w-4 h-4 text-emerald-500" />
@@ -588,11 +601,11 @@ export default function Profile() {
                   )}
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* BẢNG ĐẶC QUYỀN CẤP ĐỘ (LEVEL PERKS) */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200/90 dark:border-gray-700/90 p-6 shadow-sm">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-700">
+            <section className="profile-liquid rounded-[2rem] p-5 sm:p-6">
+              <div className="flex flex-col justify-between gap-3 border-b border-slate-900/8 pb-4 dark:border-white/8 sm:flex-row sm:items-center">
                 <h3 className="font-bold text-gray-900 dark:text-white text-sm flex items-center gap-2">
                   <BookOpen className="w-4 h-4 text-emerald-500" />
                   Đặc Quyền Của Cấp Độ ({user.level?.level_name})
@@ -607,7 +620,7 @@ export default function Profile() {
                       className={`text-xs px-2.5 py-1 rounded-lg font-medium transition ${
                         (activeTabLevel || currentLevelId) === lvl.level_id
                           ? "bg-emerald-600 text-white font-bold"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200"
+                          : "profile-liquid-soft text-gray-600 hover:bg-white/70 dark:text-gray-300 dark:hover:bg-white/10"
                       }`}
                     >
                       {lvl.level_name}
@@ -620,7 +633,7 @@ export default function Profile() {
               {/* Lưới các đặc quyền */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
                 {/* Đặc quyền 1: Hạn mức mượn */}
-                <div className="p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
+                <div className="profile-liquid-soft flex flex-col justify-between rounded-2xl p-4">
                   <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-1">
                     <BookOpen className="w-4 h-4 text-emerald-500" />
                     <span>Hạn mức mượn đồ</span>
@@ -634,7 +647,7 @@ export default function Profile() {
                 </div>
 
                 {/* Đặc quyền 2: Giảm cọc */}
-                <div className="p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
+                <div className="profile-liquid-soft flex flex-col justify-between rounded-2xl p-4">
                   <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-1">
                     <Percent className="w-4 h-4 text-emerald-500" />
                     <span>Ưu đãi tiền cọc</span>
@@ -648,7 +661,7 @@ export default function Profile() {
                 </div>
 
                 {/* Đặc quyền 3: Quyền chat */}
-                <div className="p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
+                <div className="profile-liquid-soft flex flex-col justify-between rounded-2xl p-4">
                   <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 mb-1">
                     <MessageSquare className="w-4 h-4 text-emerald-500" />
                     <span>Quyền nhắn tin (Chat)</span>
@@ -669,28 +682,28 @@ export default function Profile() {
                   </p>
                 </div>
               </div>
-            </div>
+            </section>
           </div>
         </div>
 
         {/* --- BỘ ĐIỀU KHIỂN THỬ NGHIỆM API LÊN/XUỐNG LEVEL (LEVEL SIMULATOR) --- */}
         {import.meta.env.DEV && showSimulator && (
-          <div className="bg-linear-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 shadow-xl border border-indigo-500/30">
+          <section className="profile-liquid overflow-hidden rounded-[2rem] p-6 text-slate-900 dark:text-white">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-4 border-b border-indigo-800/60">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-indigo-500/20 rounded-xl border border-indigo-400/30">
                   <SlidersHorizontal className="w-5 h-5 text-indigo-300" />
                 </div>
                 <div>
-                  <h3 className="font-black text-white text-base tracking-wide flex items-center gap-2">
+                  <h3 className="flex items-center gap-2 text-base font-black tracking-wide text-slate-950 dark:text-white">
                     Bộ Điều Khiển Thử Nghiệm API Lên / Xuống Level
                     <Badge color="purple" className="text-[10px]">
                       DEV TEST API
                     </Badge>
                   </h3>
-                  <p className="text-xs text-indigo-200/80">
+                  <p className="text-xs text-slate-500 dark:text-indigo-200/80">
                     Endpoint:{" "}
-                    <code className="bg-black/40 px-1.5 py-0.5 rounded text-indigo-300 font-mono">
+                    <code className="rounded bg-indigo-500/10 px-1.5 py-0.5 font-mono text-indigo-700 dark:bg-black/40 dark:text-indigo-300">
                       POST /api/users/level/adjust
                     </code>{" "}
                     (Tự động tính lên/xuống cấp theo Karma)
@@ -698,7 +711,7 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="text-xs text-indigo-300 bg-indigo-900/40 px-3 py-1 rounded-lg border border-indigo-700/50">
+              <div className="profile-liquid-soft rounded-full px-3 py-1 text-xs text-indigo-700 dark:text-indigo-300">
                 Trạng thái: <strong>Level {currentLevelId}</strong> (
                 {user.level?.level_name}) |{" "}
                 <strong>{user.karma_balance} Karma</strong>
@@ -709,7 +722,7 @@ export default function Profile() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-5">
               {/* CỘT 1: HÀNH ĐỘNG NHANH CỘNG / TRỪ KARMA */}
               <div className="space-y-3">
-                <label className="text-xs font-bold text-indigo-200 uppercase tracking-wider block">
+                <label className="block text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-200">
                   1. Thử nghiệm thay đổi Karma (Tự động tính Level)
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -791,7 +804,7 @@ export default function Profile() {
 
               {/* CỘT 2: HÀNH ĐỘNG TRỰC TIẾP LEVEL UP / LEVEL DOWN */}
               <div className="space-y-3">
-                <label className="text-xs font-bold text-indigo-200 uppercase tracking-wider block">
+                <label className="block text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-200">
                   2. Thử nghiệm trực tiếp Level Up & Down
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -826,27 +839,27 @@ export default function Profile() {
                   </Button>
                 </div>
 
-                <p className="text-[11px] text-indigo-300/70 pt-1">
+                <p className="pt-1 text-[11px] text-slate-500 dark:text-indigo-300/70">
                   Khi tích hợp hệ thống nhiệm vụ (missions), module
                   missions chỉ cần gọi hàm{" "}
-                  <code className="text-yellow-300 font-mono">
+                  <code className="font-mono text-amber-700 dark:text-yellow-300">
                     adjustUserKarmaAndLevel()
                   </code>{" "}
                   là level sẽ tự động nhảy tương ứng.
                 </p>
               </div>
             </div>
-          </div>
+          </section>
         )}
 
         {/* --- CHỈ SỐ TÀI KHOẢN & BẢO MẬT --- */}
-        <Card className="bg-white dark:bg-gray-800">
-          <h3 className="font-bold text-gray-900 dark:text-white pb-2 border-b border-gray-100 dark:border-gray-700 text-sm">
+        <Card className="profile-liquid !rounded-[2rem] !border-white/70 !bg-transparent shadow-none dark:!border-white/10">
+          <h3 className="border-b border-slate-900/8 pb-3 text-sm font-bold text-slate-900 dark:border-white/8 dark:text-white">
             Thông Tin Tài Khoản & Uy Tín
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-            <div className="flex items-center justify-between sm:justify-start sm:gap-3 p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl">
+            <div className="profile-liquid-soft flex items-center justify-between rounded-2xl p-4 sm:justify-start sm:gap-3">
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 Đánh giá uy tín:
               </span>
@@ -856,14 +869,14 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between sm:justify-start sm:gap-3 p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl">
+            <div className="profile-liquid-soft flex items-center justify-between rounded-2xl p-4 sm:justify-start sm:gap-3">
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 Trạng thái:
               </span>
               <Badge color="success">Đang hoạt động</Badge>
             </div>
 
-            <div className="flex items-center justify-between sm:justify-start sm:gap-3 p-3 bg-gray-50 dark:bg-gray-700/40 rounded-xl">
+            <div className="profile-liquid-soft flex items-center justify-between rounded-2xl p-4 sm:justify-start sm:gap-3">
               <span className="text-xs text-gray-500 dark:text-gray-400">
                 Email Sinh Viên:
               </span>
