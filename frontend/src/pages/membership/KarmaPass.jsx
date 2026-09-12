@@ -52,8 +52,8 @@ export default function KarmaPass() {
   return (
     <UserLayout>
       <div className="space-y-8 pb-12">
-        <header className="border-b border-slate-200 pb-7 dark:border-slate-800">
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">Membership</p>
+        <header className="border-b border-slate-200 pb-7 dark:border-slate-700">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-400">Membership</p>
           <h1 className="font-display text-4xl font-semibold text-slate-950 dark:text-white sm:text-5xl">Karma Pass</h1>
           <p className="mt-3 max-w-2xl text-slate-500 dark:text-slate-400">
             Trải nghiệm mượn đồ nhẹ nhàng hơn với ưu đãi cọc, bảo vệ giao dịch và quyền ưu tiên hiển thị.
@@ -64,7 +64,7 @@ export default function KarmaPass() {
           <section className="editorial-grid overflow-hidden rounded-3xl bg-slate-950 p-6 text-white shadow-xl sm:p-8">
             <div className="flex flex-col justify-between gap-8 sm:flex-row sm:items-start">
               <div className="flex gap-4">
-                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-amber-400 text-slate-950">
+                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-emerald-400 text-slate-950">
                   <Crown className="h-6 w-6" />
                 </span>
                 <div>
@@ -104,9 +104,9 @@ export default function KarmaPass() {
                       type="button"
                       aria-pressed={selected}
                       onClick={() => setMonths(plan.months)}
-                      className={`relative rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300/40 ${
+                      className={`relative rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300/40 ${
                         selected
-                          ? "border-slate-900 bg-slate-900 text-white dark:border-amber-400 dark:bg-amber-400 dark:text-slate-950"
+                          ? "border-slate-900 bg-slate-900 text-white dark:border-emerald-400 dark:bg-emerald-400 dark:text-slate-950"
                           : "border-slate-200 hover:border-slate-400 dark:border-slate-700 dark:hover:border-slate-500"
                       }`}
                     >
@@ -117,7 +117,7 @@ export default function KarmaPass() {
                   );
                 })}
               </div>
-              <div className="grid gap-3 border-t border-slate-100 pt-5 text-sm text-slate-600 sm:grid-cols-2 dark:border-slate-800 dark:text-slate-300">
+              <div className="grid gap-3 border-t border-slate-100 pt-5 text-sm text-slate-600 sm:grid-cols-2 dark:border-slate-700 dark:text-slate-300">
                 {["Giảm hoặc miễn phí đặt cọc", "Ưu tiên hiển thị bài đăng", "Gia hạn liền mạch", "Lớp bảo vệ giao dịch"].map((benefit) => (
                   <p key={benefit} className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-emerald-600" /> {benefit}
@@ -141,13 +141,13 @@ export default function KarmaPass() {
                     type="button"
                     aria-pressed={method === value}
                     onClick={() => setMethod(value)}
-                    className={`rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300/40 ${
+                    className={`rounded-2xl border p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300/40 ${
                       method === value
-                        ? "border-amber-400 bg-amber-50 dark:border-amber-500 dark:bg-amber-950/30"
+                        ? "border-emerald-400 bg-emerald-50 dark:border-emerald-500 dark:bg-emerald-950/30"
                         : "border-slate-200 dark:border-slate-700"
                     }`}
                   >
-                    <Icon className="h-5 w-5 text-amber-700 dark:text-amber-400" />
+                    <Icon className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
                     <p className="mt-3 font-bold text-slate-900 dark:text-white">{label}</p>
                     <p className="mt-1 text-sm text-slate-500">{price}</p>
                   </button>

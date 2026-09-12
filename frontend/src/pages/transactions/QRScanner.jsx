@@ -80,7 +80,7 @@ export default function QRScanner({ transaction, onSuccess }) {
       {/* Info card */}
       <div className="w-full bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
         <div className="flex items-center gap-2 mb-1">
-          <Zap className="w-4 h-4 text-yellow-500 fill-yellow-400" />
+          <Zap className="w-4 h-4 text-emerald-500 fill-emerald-400" />
           <span className="text-sm font-semibold text-blue-800 dark:text-blue-200">
             {transaction.karma_amount} Karma sẽ được chuyển cho người cho mượn
           </span>

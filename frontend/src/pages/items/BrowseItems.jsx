@@ -173,9 +173,9 @@ export default function BrowseItems() {
   return (
     <UserLayout>
       <section className="pb-12">
-        <div className="mb-8 flex flex-col justify-between gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end dark:border-slate-800">
+        <div className="mb-8 flex flex-col justify-between gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end dark:border-slate-700">
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-400">
               Thư viện cộng đồng
             </p>
             <h1 className="font-display text-4xl font-semibold text-slate-950 dark:text-white sm:text-5xl">Khám phá vật phẩm</h1>
@@ -193,10 +193,10 @@ export default function BrowseItems() {
         {error && <Alert color="failure" className="mb-5" onDismiss={() => setError("")}>{error}</Alert>}
 
         {showCreate && (
-          <Card id="new-item" className="mb-7 border-amber-200 bg-amber-50/40 dark:border-amber-900/50 dark:bg-amber-950/10">
+          <Card id="new-item" className="mb-7 border-emerald-200 bg-emerald-50/40 dark:border-emerald-900/50 dark:bg-emerald-950/10">
             <form onSubmit={handleCreate} className="grid gap-4 md:grid-cols-2">
               <div className="md:col-span-2">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">Bài đăng mới</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-400">Bài đăng mới</p>
                 <h2 className="mt-1 font-display text-2xl font-semibold text-slate-950 dark:text-white">Chia sẻ một vật phẩm</h2>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Điền thông tin rõ ràng để người nhận dễ tìm thấy và liên hệ với bạn.</p>
               </div>
@@ -262,9 +262,15 @@ export default function BrowseItems() {
           </Card>
         )}
 
-        <Card className="mb-7 bg-white/90 dark:bg-slate-900/90">
-          <form key={queryKey} onSubmit={handleSearch} className="grid gap-4 lg:grid-cols-4">
-            <div className="lg:col-span-2">
+        <div className="grid items-start gap-6 lg:grid-cols-[17rem_minmax(0,1fr)] xl:gap-8">
+        <aside aria-labelledby="browse-filters-title" className="min-w-0 space-y-5">
+        <Card className="bg-white/90 dark:bg-slate-900/90">
+          <h2 id="browse-filters-title" className="flex items-center gap-2 text-lg font-semibold text-slate-950 dark:text-white">
+            <SlidersHorizontal className="h-5 w-5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+            Tìm kiếm & bộ lọc
+          </h2>
+          <form key={queryKey} onSubmit={handleSearch} className="grid gap-4">
+            <div>
               <Label htmlFor="search">Từ khóa</Label>
               <TextInput
                 id="search"
@@ -299,22 +305,23 @@ export default function BrowseItems() {
                 <option value="karma_desc">Karma giảm dần</option>
               </Select>
             </div>
-            <div className="flex gap-2 lg:col-span-4 lg:justify-end">
+            <div className="grid grid-cols-2 gap-2 pt-2">
               <Button color="light" type="button" onClick={clearFilters}><X className="mr-2 h-4 w-4" />Xóa lọc</Button>
               <Button type="submit"><SlidersHorizontal className="mr-2 h-4 w-4" />Áp dụng</Button>
             </div>
           </form>
         </Card>
 
-        <div className="mb-6 hidden lg:block">
-          <div className="flex flex-wrap gap-2">
+        <div className="hidden rounded-2xl border border-slate-200 bg-white/90 p-5 dark:border-slate-700 dark:bg-slate-900/90 lg:block">
+          <h2 className="mb-4 text-sm font-bold text-slate-950 dark:text-white">Danh mục vật phẩm</h2>
+          <div className="flex flex-col gap-2">
             <button
               type="button"
               onClick={() => handleCategoryClick("")}
               aria-pressed={!appliedFilters.category_id}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+              className={`rounded-xl px-4 py-3 text-left text-sm font-semibold transition-all ${
                 !appliedFilters.category_id
-                  ? "bg-slate-900 text-white shadow-sm dark:bg-amber-400 dark:text-slate-950"
+                  ? "bg-slate-900 text-white shadow-sm dark:bg-emerald-400 dark:text-slate-950"
                   : "bg-white text-slate-600 ring-1 ring-slate-200 hover:text-slate-950 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-800"
               }`}
             >
@@ -326,9 +333,9 @@ export default function BrowseItems() {
                 type="button"
                 onClick={() => handleCategoryClick(category.category_id)}
                 aria-pressed={appliedFilters.category_id === String(category.category_id)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+                className={`rounded-xl px-4 py-3 text-left text-sm font-semibold transition-all ${
                   appliedFilters.category_id === String(category.category_id)
-                    ? "bg-slate-900 text-white shadow-sm dark:bg-amber-400 dark:text-slate-950"
+                    ? "bg-slate-900 text-white shadow-sm dark:bg-emerald-400 dark:text-slate-950"
                     : "bg-white text-slate-600 ring-1 ring-slate-200 hover:text-slate-950 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-800"
                 }`}
               >
@@ -338,6 +345,9 @@ export default function BrowseItems() {
           </div>
         </div>
 
+        </aside>
+
+        <div className="min-w-0" role="region" aria-label="Danh sách vật phẩm">
         {!loading && !itemsError && (
           <div className="mb-4 flex items-center justify-between">
             <p className="text-sm text-gray-600 dark:text-gray-400">Tìm thấy {pagination.total} vật phẩm</p>
@@ -346,7 +356,7 @@ export default function BrowseItems() {
 
         {loading ? (
           <div
-            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
             aria-busy="true"
             aria-label="Đang tải vật phẩm"
           >
@@ -386,7 +396,7 @@ export default function BrowseItems() {
             </div>
           </Card>
         ) : items.length ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {items.map((item) => <ItemCard key={item.item_id} item={item} />)}
           </div>
         ) : (
@@ -422,6 +432,8 @@ export default function BrowseItems() {
             <Button color="light" disabled={pagination.page >= pagination.total_pages} onClick={() => setSearchParams(createFilterParams({ ...appliedFilters, page: pagination.page + 1 }))}>Sau</Button>
           </div>
         )}
+        </div>
+        </div>
       </section>
     </UserLayout>
   );

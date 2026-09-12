@@ -77,9 +77,9 @@ export default function TopUpResult() {
   return (
     <UserLayout>
       <div className="mx-auto max-w-xl py-10">
-        <div className="editorial-grid rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 sm:p-12">
+        <div className="editorial-grid rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-xl shadow-slate-900/5 dark:border-slate-700 dark:bg-slate-900 sm:p-12">
           {renderIcon()}
-          <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-amber-700 dark:text-amber-400">
+          <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-400">
             Kết quả thanh toán
           </p>
           <h1 className="mt-2 font-display text-4xl font-semibold text-slate-950 dark:text-white">

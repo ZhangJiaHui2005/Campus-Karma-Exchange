@@ -183,7 +183,7 @@ export function NavigationBar() {
                   {item.category?.name || "Vật phẩm"} · {item.location || "Trong trường"}
                 </span>
               </span>
-              <span className="shrink-0 text-xs font-bold text-amber-700 dark:text-amber-400">
+              <span className="shrink-0 text-xs font-bold text-emerald-700 dark:text-emerald-400">
                 {Number(item.karma_value || 0).toLocaleString("vi-VN")} K
               </span>
             </button>
@@ -191,7 +191,7 @@ export function NavigationBar() {
           <button
             type="button"
             onClick={() => submitSearch()}
-            className="mt-1 flex w-full items-center justify-between rounded-xl border-t border-slate-100 px-3 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="mt-1 flex w-full items-center justify-between rounded-xl border-t border-slate-100 px-3 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             Xem mọi kết quả cho “{query.trim()}”
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -218,7 +218,7 @@ export function NavigationBar() {
             </span>
             <span className="ml-3 hidden leading-tight sm:block">
               <span className="font-display block text-lg font-semibold text-slate-950 dark:text-white">Campus Karma</span>
-              <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-amber-700 dark:text-amber-400">Exchange</span>
+              <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-400">Exchange</span>
             </span>
           </NavbarBrand>
 
@@ -248,7 +248,7 @@ export function NavigationBar() {
             {user && (
               <Link
                 to="/wallet"
-                className="liquid-control hidden min-h-11 items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold text-amber-800 transition sm:inline-flex dark:text-amber-300"
+                className="liquid-control hidden min-h-11 items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold text-emerald-800 transition sm:inline-flex dark:text-emerald-300"
               >
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
                 {Number(user.karma_balance || 0).toLocaleString("vi-VN")}

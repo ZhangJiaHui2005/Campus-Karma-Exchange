@@ -129,16 +129,16 @@ export default function TransactionDetail() {
     <UserLayout>
       <div className="mx-auto max-w-4xl space-y-6 pb-10">
         {/* Back + Title */}
-        <div className="flex items-center gap-3 border-b border-slate-200 pb-6 dark:border-slate-800">
+        <div className="flex items-center gap-3 border-b border-slate-200 pb-6 dark:border-slate-700">
           <button
             onClick={() => navigate("/transactions")}
             aria-label="Quay lại danh sách giao dịch"
-            className="rounded-xl border border-slate-200 p-2.5 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300/40 dark:border-slate-800 dark:hover:bg-slate-800"
+            className="rounded-xl border border-slate-200 p-2.5 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300/40 dark:border-slate-700 dark:hover:bg-slate-800"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-amber-700 dark:text-amber-400">Mã giao dịch #{tx.trans_id}</p>
+            <p className="text-xs font-bold uppercase tracking-[0.14em] text-emerald-700 dark:text-emerald-400">Mã giao dịch #{tx.trans_id}</p>
             <h1 className="font-display text-3xl font-semibold text-slate-950 dark:text-white">
               Chi tiết giao dịch
             </h1>
@@ -175,7 +175,7 @@ export default function TransactionDetail() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Thông tin đồ vật */}
-          <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
             <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <Package className="w-4 h-4 text-emerald-500" /> Đồ vật
             </h2>
@@ -200,9 +200,9 @@ export default function TransactionDetail() {
           </div>
 
           {/* Thông tin Karma */}
-          <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
             <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <Zap className="w-4 h-4 text-yellow-500" /> Phân phối Karma
+              <Zap className="w-4 h-4 text-emerald-500" /> Phân phối Karma
             </h2>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
@@ -240,7 +240,7 @@ export default function TransactionDetail() {
         </div>
 
         {/* Hai bên tham gia */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
           <h2 className="font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
             <User className="w-4 h-4 text-emerald-500" /> Các bên tham gia
           </h2>
@@ -282,7 +282,7 @@ export default function TransactionDetail() {
 
         {/* Panel QR Code & Scanner */}
         {tx.status === "ESCROW_LOCKED" && (
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
             <h2 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
               <QrCode className="w-5 h-5 text-emerald-500" /> Xác thực giao nhận
             </h2>

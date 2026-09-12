@@ -56,9 +56,9 @@ export default function Wallet() {
   return (
     <UserLayout>
       <div className="space-y-8 pb-12">
-        <header className="flex flex-col justify-between gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end dark:border-slate-800">
+        <header className="flex flex-col justify-between gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end dark:border-slate-700">
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-400">
               Tài sản tín nhiệm
             </p>
             <h1 className="font-display text-4xl font-semibold text-slate-950 dark:text-white sm:text-5xl">
@@ -74,7 +74,7 @@ export default function Wallet() {
         </header>
 
         <section className="editorial-grid relative overflow-hidden rounded-3xl bg-slate-950 p-6 text-white shadow-xl shadow-slate-950/15 sm:p-8">
-          <div className="absolute -right-12 -top-16 h-48 w-48 rounded-full border-[24px] border-amber-400/10" />
+          <div className="absolute -right-12 -top-16 h-48 w-48 rounded-full border-[24px] border-emerald-400/10" />
           <div className="relative flex flex-col justify-between gap-8 sm:flex-row sm:items-end">
             <div>
               <p className="text-sm font-semibold text-slate-300">
@@ -84,7 +84,7 @@ export default function Wallet() {
                 <span className="text-5xl font-black tracking-tight">
                   {money.format(user?.karma_balance || 0)}
                 </span>
-                <span className="text-lg font-bold text-amber-400">
+                <span className="text-lg font-bold text-emerald-400">
                   Karma
                 </span>
               </div>
@@ -93,7 +93,7 @@ export default function Wallet() {
               </p>
             </div>
             <div className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 text-sm backdrop-blur">
-              <WalletCards size={20} className="text-amber-400" />
+              <WalletCards size={20} className="text-emerald-400" />
               <span>Ví đang hoạt động</span>
             </div>
           </div>

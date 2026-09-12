@@ -112,14 +112,14 @@ export default function ItemDetail() {
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 rounded-lg text-sm font-semibold text-slate-500 transition-colors hover:text-slate-950 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-amber-300/40 dark:hover:text-white"
+          className="flex items-center gap-2 rounded-lg text-sm font-semibold text-slate-500 transition-colors hover:text-slate-950 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emerald-300/40 dark:hover:text-white"
         >
           <ArrowLeft className="w-4 h-4" /> Quay lại
         </button>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.05fr_0.95fr]">
           {/* Hình ảnh */}
-          <div className="aspect-square overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div className="aspect-square overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-sm dark:border-slate-700 dark:bg-slate-900">
             {item.image_url ? (
               <img
                 src={item.image_url}
@@ -167,10 +167,10 @@ export default function ItemDetail() {
             )}
 
             {/* Karma breakdown */}
-            <div className="space-y-3 rounded-2xl border border-amber-200 bg-amber-50/70 p-5 dark:border-amber-900/50 dark:bg-amber-950/20">
+            <div className="space-y-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5 dark:border-emerald-900/50 dark:bg-emerald-950/20">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400 flex items-center gap-1">
-                  <Zap className="w-3.5 h-3.5 text-yellow-500" />
+                  <Zap className="w-3.5 h-3.5 text-emerald-500" />
                   Phí {item.type === "GIVE" ? "nhận" : "mượn"}:
                 </span>
                 <span className="font-bold text-gray-900 dark:text-white">
@@ -237,7 +237,7 @@ export default function ItemDetail() {
                 className="w-full dark:text-white"
                 onClick={() => setShowModal(true)}
               >
-                <Zap className="w-5 h-5 mr-2 fill-yellow-300 text-yellow-300" />
+                <Zap className="w-5 h-5 mr-2 fill-emerald-300 text-emerald-300" />
                 {item.type === "GIVE" ? "Nhận đồ này" : "Mượn ngay"}
               </Button>
             )}

@@ -110,9 +110,9 @@ export default function MyItems() {
   return (
     <UserLayout>
       <section className="pb-12">
-        <div className="mb-8 flex flex-col justify-between gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end dark:border-slate-800">
+        <div className="mb-8 flex flex-col justify-between gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end dark:border-slate-700">
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-400">
               Quản lý bài đăng
             </p>
             <h1 className="font-display text-4xl font-semibold text-slate-950 dark:text-white sm:text-5xl">
